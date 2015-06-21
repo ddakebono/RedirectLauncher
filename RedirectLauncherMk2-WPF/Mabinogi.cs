@@ -40,7 +40,8 @@ namespace RedirectLauncherMk2_WPF
             mabi.Close();
             if (File.Exists(clientDirectory + "\\version.dat"))
             {
-                clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
+                //clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
+                clientVersion = 204;
             }
 
             //Get remote patch info

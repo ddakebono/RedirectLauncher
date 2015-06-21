@@ -21,12 +21,13 @@ namespace RedirectLauncherMk2_WPF
     public partial class MainWindow
     {
         private Mabinogi client = new Mabinogi("http://aurares.potato.moe/patchdata.txt");
-
+        private ClientUpdater clientUpdater;
         private SelfUpdater updater;
 
         public MainWindow()
         {
             updater = new SelfUpdater(client.launcherRepo, Properties.Settings.Default.Version, client.remoteLauncherVersion);
+            clientUpdater = new ClientUpdater(client);
             InitializeComponent();
         }
 
@@ -41,7 +42,9 @@ namespace RedirectLauncherMk2_WPF
 
         private void LaunchGame(object sender, RoutedEventArgs e)
         {
-            client.LaunchGame();
+
+            clientUpdater.checkClientUpdate();
+            //client.LaunchGame();
         }
     }
 }
