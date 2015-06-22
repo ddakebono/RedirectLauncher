@@ -37,14 +37,19 @@ namespace RedirectLauncherMk2_WPF
             LauncherVersionBlock.Text = Properties.Settings.Default.Version.ToString();
             RemoteClientVersionBlock.Text = client.remoteClientVersion.ToString();
             RemoteLauncherVersionBlock.Text = client.remoteLauncherVersion.ToString();
+            TitleBlock.Text = client.launcherName;
             updater.checkLauncherUpdates(ProgressBar);
         }
 
         private void LaunchGame(object sender, RoutedEventArgs e)
         {
 
-            clientUpdater.checkClientUpdate();
-            //client.LaunchGame();
+            clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock);
+            ClientVersionBlock.Text = client.clientVersion.ToString();
+            if (client.clientVersion == client.remoteClientVersion)
+            {
+                client.LaunchGame();
+            }
         }
     }
 }

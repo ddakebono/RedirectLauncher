@@ -7,6 +7,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Markup;
 
 namespace RedirectLauncherMk2_WPF
@@ -27,6 +29,7 @@ namespace RedirectLauncherMk2_WPF
         public String args;
         public String patchServer;
         public String loginPort;
+        public String launcherName;
         //Extra data
         public int code = 1622;
         public String crackShield = "HSLaunch.exe";
@@ -40,8 +43,7 @@ namespace RedirectLauncherMk2_WPF
             mabi.Close();
             if (File.Exists(clientDirectory + "\\version.dat"))
             {
-                //clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
-                clientVersion = 204;
+                clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
             }
 
             //Get remote patch info
@@ -67,6 +69,13 @@ namespace RedirectLauncherMk2_WPF
                 Process.Start(mabiLaunch);
                 System.Environment.Exit(0);
             }
+        }
+
+        public void writeVersionData(int newVersion, TextBlock clientVersionBlock)
+        {
+            File.WriteAllBytes(clientDirectory + "\\version.dat", BitConverter.GetBytes(newVersion));
+            clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
+            clientVersionBlock.Text = clientVersion.ToString();
         }
 
         public void handlePatchData(Dictionary<String, String> patchdata)
@@ -121,7 +130,15 @@ namespace RedirectLauncherMk2_WPF
             }
             try
             {
-                patchServer = "ftp://" + patchdata["main_ftp"];
+                launcherName = patchdata["redirectlaunchername"];
+            }
+            catch (KeyNotFoundException e)
+            {
+                launcherName = "Redirect Gaming Mabinogi Launcher";
+            }
+            try
+            {
+                patchServer = patchdata["main_ftp"];
             }
             catch (KeyNotFoundException e)
             {

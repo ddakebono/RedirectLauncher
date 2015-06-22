@@ -1,11 +1,16 @@
-﻿using System;
+﻿using Ionic.Zip;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Net.FtpClient;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace RedirectLauncherMk2_WPF
 {
@@ -14,6 +19,18 @@ namespace RedirectLauncherMk2_WPF
         private Mabinogi client;
         private DirectoryInfo updateDirectory;
         private DirectoryInfo updateExtractDirectory;
+        private ProgressBar progressBar;
+        private int updateParts = 0;
+        private String localToRemote;
+        private string host;
+        private int updatePartsDownloaded = 0;
+        private bool triedUpdateFile = false;
+        private bool checkedForBadFiles = false;
+        private Queue badFiles;
+        private int badFileCorrectionAttempt = 0;
+        private TextBlock clientVersionBlock;
+        private int extractionFinished = 0;
+        private Dictionary<String, String> updatePartHashes = new Dictionary<string,string>();
 
         public ClientUpdater(Mabinogi client)
         {
@@ -22,13 +39,24 @@ namespace RedirectLauncherMk2_WPF
             this.updateExtractDirectory = new DirectoryInfo(updateDirectory.FullName + "\\extracted");
         }
 
-        public void checkClientUpdate()
+        public void checkClientUpdate(ProgressBar progressBar, TextBlock clientVersionBlock)
         {
             if (client.clientVersion < client.remoteClientVersion)
             {
                 if (MessageBox.Show("It appears your client is out of date!\nWould you like to update to the latest client version?", "Update", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     //Start update
+                    localToRemote = client.clientVersion + "_to_" + client.remoteClientVersion;
+                    if (client.patchServer.Equals("ftp://mabipatch.nexon.net/game/"))
+                    {
+                        host = "ftp://mabipatch.nexon.net";
+                    }
+                    else
+                    {
+                        host = "ftp://" + client.patchServer;
+                    }
+                    this.clientVersionBlock = clientVersionBlock;
+                    this.progressBar = progressBar;
                     prepareUpdateDirectory();
                     startUpdate();
                 }
@@ -41,41 +69,231 @@ namespace RedirectLauncherMk2_WPF
 
         private void startUpdate()
         {
-            FtpClient downloader = new FtpClient();
-            if (client.patchServer.Equals("mabipatch.nexon.net/game/"))
+            if (updateParts == 0)
             {
-                FtpClient.Connect(new Uri("mabipatch.nexon.net"));
+                FileInfo patchFile = new FileInfo(updateDirectory.FullName + "\\update.txt");
+                if (patchFile.Exists)
+                {
+                    readUpdateListFile();
+                }
+                else
+                {
+                    if (!triedUpdateFile)
+                    {
+                        triedUpdateFile = true;
+                        downloadFileFromFtp(client.remoteClientVersion + "/" + localToRemote + ".txt", updateDirectory.FullName + "\\update.txt", host);
+                    }
+                    else
+                    {
+                        //Trigger full client redownload
+                        downloadFileFromFtp(client.remoteClientVersion + "/" + client.remoteClientVersion + "_full.txt", updateDirectory.FullName + "\\update.txt", host);
+                    }
+                }
+            }
+            else if(updatePartsDownloaded < updateParts)
+            {
+                downloadFileFromFtp(client.remoteClientVersion + "/" + localToRemote + "." + updatePartsDownloaded.ToString("000"), updateDirectory.FullName + "\\" + localToRemote + "." + updatePartsDownloaded.ToString("000"), host);
+                updatePartsDownloaded++;
             }
             else
             {
-                FtpClient.Connect(new Uri(client.patchServer));
+                //Compare hashes with hashes from patch info file
+                if (!checkedForBadFiles)
+                {
+                    badFiles = compareHashesForBadFiles();
+                    checkedForBadFiles = true;
+                }
+                if (badFiles.Count > 0)
+                {
+                    if (badFileCorrectionAttempt < 4)
+                    {
+                        //Redownload files
+                        badFileCorrectionAttempt++;
+                        String badFile = (String)badFiles.Dequeue();
+                        File.Delete(updateDirectory.FullName + "\\" + badFile);
+                        downloadFileFromFtp(client.remoteClientVersion + "/" + badFile, updateDirectory.FullName + "\\" + badFile, host);
+                    }
+                    else
+                    {
+                        MessageBox.Show("It seems that the package files are corrupted, even after 3 download attempts, please try to patch using a different launcher or try again later...");
+                    }
+                }
+                else if(badFileCorrectionAttempt>0)
+                {
+                    checkedForBadFiles = false;
+                    startUpdate();
+                }
+                if (checkedForBadFiles && badFiles.Count == 0 && File.Exists(updateDirectory.FullName + "\\language.zip"))
+                {
+                    //Download complete merge and install
+                    mergeUpdateParts();
+                    ExtractFile(updateDirectory.FullName + "\\update.zip", updateExtractDirectory.FullName);
+                    ExtractFile(updateDirectory.FullName + "\\language.zip", updateExtractDirectory.FullName + "\\package\\");
+                }
+                else
+                {
+                    downloadFileFromFtp(client.remoteClientVersion + "/" + client.remoteClientVersion + "_language.p_", updateDirectory.FullName + "\\language.zip", host);
+                }
             }
-            if (downloadFileFromFtp(client.remoteClientVersion + "/" + client.clientVersion + "_to_" + client.remoteClientVersion + ".txt", updateDirectory.FullName + "update.txt", downloader))
-            {
-                //Start normal update process
-            }
-            else
-            {
-                //Begin full client download
-            }
-
         }
 
-        private bool downloadFileFromFtp(String pathToFile, String pathToSave, FtpClient downloader){
-            bool downloadComplete = true;
-            Stream f = downloader.OpenRead(pathToFile);
-            FileInfo save = new FileInfo(pathToSave);
-            save.Create();
-            Stream fo = save.OpenWrite();
-            byte[] buffer = new byte[8 * 1024];
-            int count;
-            while ((count = f.Read(buffer, 0, buffer.Length)) > 0)
+        private void finishUpdate(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
             {
-                fo.Write(buffer, 0, count);
+                MessageBox.Show("The extraction operation has been canceled!");
             }
-            fo.Close();
-            f.Close();
-            return downloadComplete;
+            else if (!(e.Error == null))
+            {
+                MessageBox.Show("The background worker operation extracting the patch has encountered an error, please retry the patch!");
+            }
+            else
+            {
+                if (extractionFinished > 0)
+                {
+                    moveExtractedDataToClient();
+                    client.writeVersionData(client.remoteClientVersion, clientVersionBlock);
+                }
+                else
+                {
+                    extractionFinished++;
+                }
+            }
+        }
+
+        private void updateCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                MessageBox.Show("The patch install operation was canceled!");
+            }
+            else if (!(e.Error == null))
+            {
+                MessageBox.Show("The background worker operation moving the patch data has encountered an error, please retry the patch!");
+                throw e.Error;
+            }
+            else
+            {
+                updateDirectory.Delete(true);
+                MessageBox.Show("The patch has been completed successfully, you may now launch the client!");
+            }
+        }
+
+        private Queue compareHashesForBadFiles()
+        {
+            Queue result = new Queue();
+            for (int i = 0; i < updateParts; i++)
+            {
+                FileInfo file = new FileInfo(updateDirectory.FullName + "\\" + localToRemote + "." + i.ToString("000"));
+                String fileHash = BitConverter.ToString(System.Security.Cryptography.MD5.Create().ComputeHash(file.OpenRead())).ToLower().Replace("-", "");
+                if (!fileHash.Equals(updatePartHashes[file.Name]))
+                {
+                    result.Enqueue(file.Name);
+                }
+            }
+            return result;
+        }
+
+        private void mergeUpdateParts()
+        {
+            FileInfo output = new FileInfo(updateDirectory.FullName + "\\update.zip");
+            FileStream outputStream = output.OpenWrite();
+            for (int i = 0; i < updateParts; i++)
+            {
+                CopyStream(outputStream, File.OpenRead(updateDirectory.FullName + "\\" + localToRemote + "." + i.ToString("000")));
+            }
+            outputStream.Close();
+        }
+
+        void CopyStream(Stream destination, Stream source)
+        {
+            int count;
+            byte[] buffer = new byte[1024];
+            while ((count = source.Read(buffer, 0, buffer.Length)) > 0)
+                destination.Write(buffer, 0, count);
+        }
+
+        private void moveExtractedDataToClient()
+        {
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(updateCompleted);
+            worker.ProgressChanged += (o, e) =>
+            {
+                progressBar.Value = e.ProgressPercentage;
+            };
+            worker.DoWork += (o, e) =>
+            {
+                int fileTransferred = 0;
+                foreach (DirectoryInfo dir in updateExtractDirectory.GetDirectories("*", SearchOption.AllDirectories))
+                    Directory.CreateDirectory(dir.FullName.Replace(updateExtractDirectory.FullName, client.clientDirectory + "\\"));
+                FileInfo[] files = updateExtractDirectory.GetFiles("*", SearchOption.AllDirectories);
+                foreach (FileInfo file in files)
+                {
+                    file.CopyTo(Path.Combine(client.clientDirectory, file.FullName.Replace(updateExtractDirectory.FullName + "\\", "")), true);
+                    fileTransferred++;
+                    worker.ReportProgress((fileTransferred/files.Length)*100);
+                    file.Delete();
+                }
+            };
+
+            worker.RunWorkerAsync();
+        }
+
+        public void ExtractFile(string zipToUnpack, string unpackDirectory)
+        {
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(finishUpdate);
+            worker.ProgressChanged += (o, e) =>
+            {
+                progressBar.Value = e.ProgressPercentage;
+            };
+            worker.DoWork += (o, e) =>
+            {
+                using (ZipFile zip = ZipFile.Read(zipToUnpack))
+                {  
+                    int step = (zip.Count / 100);
+                    int percentComplete = 0;
+                    foreach (ZipEntry file in zip)
+                    {
+                        file.Extract(unpackDirectory, ExtractExistingFileAction.OverwriteSilently);
+                        percentComplete += step;
+                        worker.ReportProgress(percentComplete);
+                    }
+                }
+            };
+    
+            worker.RunWorkerAsync();
+    }
+
+        public void downloadFileFromFtp(String pathToFile, String pathToSave, String host)
+        {
+            WebClient w = new WebClient();
+            w.DownloadFileCompleted += new AsyncCompletedEventHandler(downloadComplete);
+            w.DownloadProgressChanged += new DownloadProgressChangedEventHandler(progressUpdate);
+            w.DownloadFileAsync(new Uri(host + "/" + pathToFile), pathToSave);
+        }
+        //Download async functions
+        private void progressUpdate(object sender, DownloadProgressChangedEventArgs e)
+        {
+            progressBar.Value = e.ProgressPercentage;
+        }
+        private void downloadComplete(object sender, AsyncCompletedEventArgs e)
+        {
+            startUpdate();
+        }
+
+        private void readUpdateListFile()
+        {
+            String[] updateList = File.ReadAllLines(updateDirectory.FullName + "\\update.txt");
+            updateParts = int.Parse(updateList[0]);
+            for (int i = 1; i < updateList.Length; i++)
+            {
+                String[] lineTemp = updateList[i].Split(',');
+                updatePartHashes.Add(lineTemp[0].Trim(), lineTemp[2].Trim());
+            }
+            startUpdate();
         }
 
         private void prepareUpdateDirectory()
