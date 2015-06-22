@@ -58,7 +58,7 @@ namespace RedirectLauncherMk2_WPF
                     this.clientVersionBlock = clientVersionBlock;
                     this.progressBar = progressBar;
                     prepareUpdateDirectory();
-                    startUpdate();
+                    startClientUpdate(null, null);
                 }
                 else
                 {
@@ -67,7 +67,7 @@ namespace RedirectLauncherMk2_WPF
             }
         }
 
-        private void startUpdate()
+        private void startClientUpdate(object sender, AsyncCompletedEventArgs e)
         {
             if (updateParts == 0)
             {
@@ -81,18 +81,25 @@ namespace RedirectLauncherMk2_WPF
                     if (!triedUpdateFile)
                     {
                         triedUpdateFile = true;
-                        downloadFileFromFtp(client.remoteClientVersion + "/" + localToRemote + ".txt", updateDirectory.FullName + "\\update.txt", host);
+                        downloadFileFromFtp(client.remoteClientVersion + "/" + localToRemote + ".txt", updateDirectory.FullName + "\\update.txt", host, new AsyncCompletedEventHandler(startClientUpdate));
                     }
                     else
                     {
                         //Trigger full client redownload
-                        downloadFileFromFtp(client.remoteClientVersion + "/" + client.remoteClientVersion + "_full.txt", updateDirectory.FullName + "\\update.txt", host);
+                        downloadFileFromFtp(client.remoteClientVersion + "/" + client.remoteClientVersion + "_full.txt", updateDirectory.FullName + "\\update.txt", host, new AsyncCompletedEventHandler(startClientUpdate));
                     }
                 }
             }
-            else if(updatePartsDownloaded < updateParts)
+            else
             {
-                downloadFileFromFtp(client.remoteClientVersion + "/" + localToRemote + "." + updatePartsDownloaded.ToString("000"), updateDirectory.FullName + "\\" + localToRemote + "." + updatePartsDownloaded.ToString("000"), host);
+                downloadClientUpdateParts(null, null);
+            }
+        }
+        private void downloadClientUpdateParts(object sender, AsyncCompletedEventArgs e)
+        {
+            if (updatePartsDownloaded < updateParts)
+            {
+                downloadFileFromFtp(client.remoteClientVersion + "/" + localToRemote + "." + updatePartsDownloaded.ToString("000"), updateDirectory.FullName + "\\" + localToRemote + "." + updatePartsDownloaded.ToString("000"), host, new AsyncCompletedEventHandler(downloadClientUpdateParts));
                 updatePartsDownloaded++;
             }
             else
@@ -111,17 +118,17 @@ namespace RedirectLauncherMk2_WPF
                         badFileCorrectionAttempt++;
                         String badFile = (String)badFiles.Dequeue();
                         File.Delete(updateDirectory.FullName + "\\" + badFile);
-                        downloadFileFromFtp(client.remoteClientVersion + "/" + badFile, updateDirectory.FullName + "\\" + badFile, host);
+                        downloadFileFromFtp(client.remoteClientVersion + "/" + badFile, updateDirectory.FullName + "\\" + badFile, host, , new AsyncCompletedEventHandler(downloadClientUpdateParts));
                     }
                     else
                     {
                         MessageBox.Show("It seems that the package files are corrupted, even after 3 download attempts, please try to patch using a different launcher or try again later...");
                     }
                 }
-                else if(badFileCorrectionAttempt>0)
+                else if (badFileCorrectionAttempt > 0)
                 {
                     checkedForBadFiles = false;
-                    startUpdate();
+                    downloadClientUpdateParts(null,null);
                 }
                 if (checkedForBadFiles && badFiles.Count == 0 && File.Exists(updateDirectory.FullName + "\\language.zip"))
                 {
@@ -132,7 +139,7 @@ namespace RedirectLauncherMk2_WPF
                 }
                 else
                 {
-                    downloadFileFromFtp(client.remoteClientVersion + "/" + client.remoteClientVersion + "_language.p_", updateDirectory.FullName + "\\language.zip", host);
+                    downloadFileFromFtp(client.remoteClientVersion + "/" + client.remoteClientVersion + "_language.p_", updateDirectory.FullName + "\\language.zip", host, new AsyncCompletedEventHandler(downloadClientUpdateParts));
                 }
             }
         }
@@ -267,10 +274,10 @@ namespace RedirectLauncherMk2_WPF
             worker.RunWorkerAsync();
     }
 
-        public void downloadFileFromFtp(String pathToFile, String pathToSave, String host)
+        public void downloadFileFromFtp(String pathToFile, String pathToSave, String host, AsyncCompletedEventHandler returnEvent)
         {
             WebClient w = new WebClient();
-            w.DownloadFileCompleted += new AsyncCompletedEventHandler(downloadComplete);
+            w.DownloadFileCompleted += returnEvent;
             w.DownloadProgressChanged += new DownloadProgressChangedEventHandler(progressUpdate);
             w.DownloadFileAsync(new Uri(host + "/" + pathToFile), pathToSave);
         }
