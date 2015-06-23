@@ -17,13 +17,15 @@ namespace RedirectLauncherMk2_WPF
     {
         //Client data
         public int clientVersion;
+        public int clientModVersion;
         public String clientDirectory;
         //Server data
         public int remoteClientVersion;
         public int remoteLauncherVersion;
+        public int remoteClientModVersion;
         public bool canPatch;
-        public bool isRedirectReady;
         public String launcherRepo;
+        public String launcherModRepo;
         public String loginIp;
         public String langPack;
         public String args;
@@ -44,6 +46,18 @@ namespace RedirectLauncherMk2_WPF
             if (File.Exists(clientDirectory + "\\version.dat"))
             {
                 clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
+            }
+            else
+            {
+                clientVersion = 0;
+            }
+            if (File.Exists(clientDirectory + "\\modVersion.dat"))
+            {
+                clientModVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\modVersion.dat"), 0);
+            }
+            else
+            {
+                clientModVersion = 0;
             }
 
             //Get remote patch info
@@ -71,11 +85,26 @@ namespace RedirectLauncherMk2_WPF
             }
         }
 
+        public String getLocalClientVersionString()
+        {
+            return clientVersion + "." + clientModVersion;
+        }
+        public String getRemoteClientVersionString()
+        {
+            return remoteClientVersion + "." + remoteClientModVersion;
+        }
+
         public void writeVersionData(int newVersion, TextBlock clientVersionBlock)
         {
             File.WriteAllBytes(clientDirectory + "\\version.dat", BitConverter.GetBytes(newVersion));
             clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
-            clientVersionBlock.Text = clientVersion.ToString();
+            clientVersionBlock.Text = getLocalClientVersionString();
+        }
+        public void writeModVersionData(int newVersion, TextBlock clientVersionBlock)
+        {
+            File.WriteAllBytes(clientDirectory + "\\modVersion.dat", BitConverter.GetBytes(newVersion));
+            clientModVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\modVersion.dat"), 0);
+            clientVersionBlock.Text = getLocalClientVersionString();
         }
 
         public void handlePatchData(Dictionary<String, String> patchdata)
@@ -154,19 +183,27 @@ namespace RedirectLauncherMk2_WPF
             }
             try
             {
-                isRedirectReady = (patchdata["redirectenabled"] == "1" ? true : false);
-            }
-            catch (KeyNotFoundException e)
-            {
-                isRedirectReady = false;
-            }
-            try
-            {
                 launcherRepo = patchdata["redirectlauncherrepo"];
             }
             catch (KeyNotFoundException e)
             {
                 launcherRepo = "";
+            }
+            try
+            {
+                remoteClientModVersion = int.Parse(patchdata["redirect_mod_version"]);
+            }
+            catch (KeyNotFoundException e)
+            {
+                remoteClientModVersion = 0;
+            }
+            try
+            {
+                launcherModRepo = patchdata["redirect_mod_repo"];
+            }
+            catch (KeyNotFoundException e)
+            {
+                launcherModRepo = "";
             }
         }
 

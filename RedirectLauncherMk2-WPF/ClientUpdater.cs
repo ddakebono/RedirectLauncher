@@ -23,6 +23,7 @@ namespace RedirectLauncherMk2_WPF
         private int updateParts = 0;
         private String localToRemote;
         private string host;
+        private String modHost;
         private int updatePartsDownloaded = 0;
         private bool triedUpdateFile = false;
         private bool checkedForBadFiles = false;
@@ -30,6 +31,7 @@ namespace RedirectLauncherMk2_WPF
         private int badFileCorrectionAttempt = 0;
         private TextBlock clientVersionBlock;
         private int extractionFinished = 0;
+        public bool isUpdateInProgress = false;
         private Dictionary<String, String> updatePartHashes = new Dictionary<string,string>();
 
         public ClientUpdater(Mabinogi client)
@@ -46,6 +48,7 @@ namespace RedirectLauncherMk2_WPF
                 if (MessageBox.Show("It appears your client is out of date!\nWould you like to update to the latest client version?", "Update", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     //Start update
+                    isUpdateInProgress = true;
                     localToRemote = client.clientVersion + "_to_" + client.remoteClientVersion;
                     if (client.patchServer.Equals("ftp://mabipatch.nexon.net/game/"))
                     {
@@ -58,7 +61,8 @@ namespace RedirectLauncherMk2_WPF
                     this.clientVersionBlock = clientVersionBlock;
                     this.progressBar = progressBar;
                     prepareUpdateDirectory();
-                    startClientUpdate(null, null);
+                    if(client.clientVersion<client.remoteClientVersion)
+                        startClientUpdate(null, null);
                 }
                 else
                 {
@@ -118,7 +122,7 @@ namespace RedirectLauncherMk2_WPF
                         badFileCorrectionAttempt++;
                         String badFile = (String)badFiles.Dequeue();
                         File.Delete(updateDirectory.FullName + "\\" + badFile);
-                        downloadFileFromFtp(client.remoteClientVersion + "/" + badFile, updateDirectory.FullName + "\\" + badFile, host, , new AsyncCompletedEventHandler(downloadClientUpdateParts));
+                        downloadFileFromFtp(client.remoteClientVersion + "/" + badFile, updateDirectory.FullName + "\\" + badFile, host, new AsyncCompletedEventHandler(downloadClientUpdateParts));
                     }
                     else
                     {
@@ -182,6 +186,7 @@ namespace RedirectLauncherMk2_WPF
             else
             {
                 updateDirectory.Delete(true);
+                isUpdateInProgress = false;
                 MessageBox.Show("The patch has been completed successfully, you may now launch the client!");
             }
         }
@@ -286,10 +291,6 @@ namespace RedirectLauncherMk2_WPF
         {
             progressBar.Value = e.ProgressPercentage;
         }
-        private void downloadComplete(object sender, AsyncCompletedEventArgs e)
-        {
-            startUpdate();
-        }
 
         private void readUpdateListFile()
         {
@@ -300,7 +301,7 @@ namespace RedirectLauncherMk2_WPF
                 String[] lineTemp = updateList[i].Split(',');
                 updatePartHashes.Add(lineTemp[0].Trim(), lineTemp[2].Trim());
             }
-            startUpdate();
+            startClientUpdate(null, null);
         }
 
         private void prepareUpdateDirectory()

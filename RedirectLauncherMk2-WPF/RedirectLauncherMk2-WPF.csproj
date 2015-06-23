@@ -105,6 +105,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ClientUpdater.cs" />
+    <Compile Include="ModUpdater.cs" />
     <Compile Include="SelfUpdater.cs" />
     <Compile Include="Mabinogi.cs" />
     <Compile Include="MainWindow.xaml.cs">

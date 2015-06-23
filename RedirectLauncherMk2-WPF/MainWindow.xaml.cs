@@ -22,20 +22,23 @@ namespace RedirectLauncherMk2_WPF
     {
         private Mabinogi client = new Mabinogi("http://aurares.potato.moe/patchdata.txt");
         private ClientUpdater clientUpdater;
+        private ModUpdater modUpdater;
         private SelfUpdater updater;
+        private bool skipModpackUpdate;
 
         public MainWindow()
         {
             updater = new SelfUpdater(client.launcherRepo, Properties.Settings.Default.Version, client.remoteLauncherVersion);
             clientUpdater = new ClientUpdater(client);
+            modUpdater = new ModUpdater(client);
             InitializeComponent();
         }
 
         private void windowIsReady(object sender, EventArgs e)
         {
-            ClientVersionBlock.Text = client.clientVersion.ToString();
+            ClientVersionBlock.Text = client.getLocalClientVersionString();
             LauncherVersionBlock.Text = Properties.Settings.Default.Version.ToString();
-            RemoteClientVersionBlock.Text = client.remoteClientVersion.ToString();
+            RemoteClientVersionBlock.Text = client.getRemoteClientVersionString();
             RemoteLauncherVersionBlock.Text = client.remoteLauncherVersion.ToString();
             TitleBlock.Text = client.launcherName;
             updater.checkLauncherUpdates(ProgressBar);
@@ -43,10 +46,9 @@ namespace RedirectLauncherMk2_WPF
 
         private void LaunchGame(object sender, RoutedEventArgs e)
         {
-
+            modUpdater.startModUpdate(ProgressBar, ClientVersionBlock);
             clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock);
-            ClientVersionBlock.Text = client.clientVersion.ToString();
-            if (client.clientVersion == client.remoteClientVersion)
+            if (client.clientVersion == client.remoteClientVersion && ((client.clientModVersion == client.remoteClientModVersion && modUpdater.doesModpackFileExist() && !modUpdater.isUpdateInProgress) || (modUpdater.hasUserSkippedUpdate)) && !clientUpdater.isUpdateInProgress)
             {
                 client.LaunchGame();
             }
