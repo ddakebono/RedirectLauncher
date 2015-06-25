@@ -54,6 +54,7 @@ namespace RedirectLauncherMk2_WPF
             }
             else
             {
+                isUpdateInProgress = false;
             }
             return true;
         }
