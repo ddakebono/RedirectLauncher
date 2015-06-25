@@ -1,4 +1,10 @@
-﻿<metro:MetroWindow x:Class="RedirectLauncherMk2_WPF.MainWindow"
+﻿<!--
+Copyright 2015 Owen Bennett
+This file is a part of the Redirect-Launcher-MK2 by Owen Bennett.
+All code contained in here is licensed under the MIT license.
+Please fill issue report on http://git.potato.moe/potato-san/Redirect-Launcher-mk2
+-->
+<metro:MetroWindow x:Class="RedirectLauncherMk2_WPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:metro="http://schemes.grabacr.net/winfx/2014/controls"
