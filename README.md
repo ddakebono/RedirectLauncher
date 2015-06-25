@@ -39,7 +39,7 @@ A blank copy of this is included in the repo
 > redirectlaunchername=  
 > redirect_mod_version=1  
 > redirect_mod_repo=http://webhost-url/patchdata  
-> redirect_launcher_webpage=http://webhost-url/launcher.html
+> redirect_launcher_webpage=http://webhost-url/launcher.html  
 > login=(Login server ip)  
 > login_port=11000  
 > arg=chatip:(Chat server ip) chatport:8002 setting:"file://data/features.xml=Regular, USA" resourcesvr:"http://webhost-url/resources/"  
