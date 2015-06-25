@@ -32,6 +32,7 @@ namespace RedirectLauncherMk2_WPF
         private TextBlock clientVersionBlock;
         private int extractionFinished = 0;
         public bool isUpdateInProgress = false;
+        private bool fullClientUpdate = false;
         private Dictionary<String, String> updatePartHashes = new Dictionary<string,string>();
 
         public ClientUpdater(Mabinogi client)
@@ -76,7 +77,7 @@ namespace RedirectLauncherMk2_WPF
             if (updateParts == 0)
             {
                 FileInfo patchFile = new FileInfo(updateDirectory.FullName + "\\update.txt");
-                if (patchFile.Exists)
+                if (patchFile.Exists && patchFile.Length > 0)
                 {
                     readUpdateListFile();
                 }
@@ -90,6 +91,7 @@ namespace RedirectLauncherMk2_WPF
                     else
                     {
                         //Trigger full client redownload
+                        localToRemote = client.remoteClientVersion + "_full";
                         downloadFileFromFtp(client.remoteClientVersion + "/" + client.remoteClientVersion + "_full.txt", updateDirectory.FullName + "\\update.txt", host, new AsyncCompletedEventHandler(startClientUpdate));
                     }
                 }
