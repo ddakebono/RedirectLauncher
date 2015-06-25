@@ -40,6 +40,7 @@ namespace RedirectLauncherMk2_WPF
         public String patchServer;
         public String loginPort;
         public String launcherName;
+        public String launcherWebpage;
         //Extra data
         public int code = 1622;
         public String crackShield = "HSLaunch.exe";
@@ -268,6 +269,14 @@ namespace RedirectLauncherMk2_WPF
             catch (KeyNotFoundException e)
             {
                 launcherModRepo = "";
+            }
+            try
+            {
+                launcherWebpage = patchdata["redirect_launcher_webpage"];
+            }
+            catch (KeyNotFoundException e)
+            {
+                launcherWebpage = "";
             }
         }
 

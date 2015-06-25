@@ -34,7 +34,7 @@ Please fill issue report on http://git.potato.moe/potato-san/Redirect-Launcher-m
 
             </Grid>
         </Border>
-        <WebBrowser Grid.Column="0" Grid.Row="1" Margin="0,10,0,0" Source="http://aura.potato.moe/launcher" Grid.ColumnSpan="2"/>
+        <WebBrowser x:Name="WebBlock" Grid.Column="0" Grid.Row="1" Margin="0,10,0,0" Source="{x:Null}" Grid.ColumnSpan="2"/>
         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

@@ -30,13 +30,13 @@ namespace RedirectLauncherMk2_WPF
         private ClientUpdater clientUpdater;
         private ModUpdater modUpdater;
         private SelfUpdater updater;
-        private bool skipModpackUpdate;
 
         public MainWindow()
         {
             updater = new SelfUpdater(client.launcherRepo, Properties.Settings.Default.Version, client.remoteLauncherVersion);
             clientUpdater = new ClientUpdater(client);
             modUpdater = new ModUpdater(client);
+
             InitializeComponent();
         }
 
@@ -46,6 +46,7 @@ namespace RedirectLauncherMk2_WPF
             LauncherVersionBlock.Text = Properties.Settings.Default.Version.ToString();
             RemoteClientVersionBlock.Text = client.getRemoteClientVersionString();
             RemoteLauncherVersionBlock.Text = client.remoteLauncherVersion.ToString();
+            WebBlock.Source = new Uri(client.launcherWebpage);
             TitleBlock.Text = client.launcherName;
             updater.checkLauncherUpdates(ProgressBar);
         }
