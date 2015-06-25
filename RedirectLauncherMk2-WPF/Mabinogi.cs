@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Markup;
 
 namespace RedirectLauncherMk2_WPF
@@ -40,16 +41,16 @@ namespace RedirectLauncherMk2_WPF
         public Mabinogi(String patchURL)
         {
             //Get local data
-            RegistryKey mabi = Registry.CurrentUser.OpenSubKey(@"Software\Nexon\Mabinogi", false);
-            clientDirectory = (String)mabi.GetValue("");
-            mabi.Close();
+            clientDirectory = locateMabinogiClientDirectory();
             if (File.Exists(clientDirectory + "\\version.dat"))
             {
                 clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
             }
             else
             {
+                //This should only be reached should a client version.dat not be found at all
                 clientVersion = 0;
+                writeVersionData(clientVersion, null);
             }
             if (File.Exists(clientDirectory + "\\modVersion.dat"))
             {
@@ -94,11 +95,67 @@ namespace RedirectLauncherMk2_WPF
             return remoteClientVersion + "." + remoteClientModVersion;
         }
 
+        private String locateMabinogiClientDirectory()
+        {
+            RegistryKey mabinogiRegistry = Registry.CurrentUser.OpenSubKey(@"Software\Nexon\Mabinogi", true);
+            String redirectRegKey = (String)mabinogiRegistry.GetValue("RDClientRoot");
+            String mabiRegDirectory = (String)mabinogiRegistry.GetValue("");
+            String steamCommon = (String)Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam", false).GetValue("SteamPath") + "\\steamapps\\common\\Mabinogi";
+            String result;
+            if (File.Exists(redirectRegKey + "\\version.dat"))
+            {
+                //This will be set once the launcher is run for the first time.
+                result = redirectRegKey;
+            }
+            else
+            {
+                if (File.Exists(mabiRegDirectory + "\\version.dat"))
+                {
+                    //If mabi exists in it's default directory
+                    result = mabiRegDirectory;
+                }
+                else if (File.Exists(steamCommon + "\\version.dat"))
+                {
+                    //If mabi is installed from steam
+                    result = steamCommon;
+                }
+                else if (File.Exists(System.Environment.CurrentDirectory + "\\version.dat"))
+                {
+                    //If launcher is in the client directory
+                    result = System.Environment.CurrentDirectory;
+                }
+                else
+                {
+                    //User must define a client directory
+                    FolderBrowserDialog find = new FolderBrowserDialog();
+                    find.Description = "Select the Mabinogi Client Directory.\nIf one doesn't exist just choose anywhere, the launcher will start a full download.";
+                    DialogResult selection = find.ShowDialog();
+                    String directory = find.SelectedPath;
+                    if (File.Exists(directory + "\\version.dat"))
+                    {
+                        //User defined folder has required data
+                        result = directory;
+                    }
+                    else
+                    {
+                        //Trigger full client install in standard directory
+                        Directory.CreateDirectory("C:\\Nexon\\Mabinogi");
+                        result = "C:\\Nexon\\Mabinogi";
+                    }
+                }
+            }
+            mabinogiRegistry.SetValue("RDClientRoot", result, RegistryValueKind.String);
+            return result;
+        }
+
         public void writeVersionData(int newVersion, TextBlock clientVersionBlock)
         {
             File.WriteAllBytes(clientDirectory + "\\version.dat", BitConverter.GetBytes(newVersion));
-            clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
-            clientVersionBlock.Text = getLocalClientVersionString();
+            if (clientVersionBlock != null)
+            {
+                clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
+                clientVersionBlock.Text = getLocalClientVersionString();
+            }
         }
         public void writeModVersionData(int newVersion, TextBlock clientVersionBlock)
         {
