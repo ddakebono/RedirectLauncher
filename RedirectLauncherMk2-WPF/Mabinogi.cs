@@ -41,6 +41,7 @@ namespace RedirectLauncherMk2_WPF
         public String loginPort;
         public String launcherName;
         public String launcherWebpage;
+        public bool offlineMode;
         //Extra data
         public int code = 1622;
         public String crackShield = "HSLaunch.exe";
@@ -276,32 +277,41 @@ namespace RedirectLauncherMk2_WPF
             }
             catch (KeyNotFoundException e)
             {
-                launcherWebpage = "";
+                launcherWebpage = "about:blank";
             }
         }
 
         private Dictionary<String, String> patchData(String patchUrl)
+        
         {
-            HttpWebRequest initConnection = (HttpWebRequest)WebRequest.Create(patchUrl);
-            HttpWebResponse recievedData = (HttpWebResponse)initConnection.GetResponse();
-            Stream dataStream = recievedData.GetResponseStream();
-            Encoding enc = Encoding.UTF8;
-            StreamReader r = new StreamReader(dataStream, enc);
-            Dictionary<String, String> result = new Dictionary<string,string>();
-            String tempLine;
-            while ((tempLine = r.ReadLine()) != null)
+            Dictionary<String, String> result = new Dictionary<string, string>();
+            try
             {
-                if (tempLine.Trim().Length > 0 && !tempLine[0].Equals("#"))
+                HttpWebRequest initConnection = (HttpWebRequest)WebRequest.Create(patchUrl);
+                HttpWebResponse recievedData = (HttpWebResponse)initConnection.GetResponse();
+                Stream dataStream = recievedData.GetResponseStream();
+                Encoding enc = Encoding.UTF8;
+                StreamReader r = new StreamReader(dataStream, enc);
+                String tempLine;
+                while ((tempLine = r.ReadLine()) != null)
                 {
-                    String[] tempSplit = tempLine.Split(new char[] { '=' }, 2);
-                    if (tempSplit.Length == 2)
+                    if (tempLine.Trim().Length > 0 && !tempLine[0].Equals("#"))
                     {
-                        result.Add(tempSplit[0], tempSplit[1]);
+                        String[] tempSplit = tempLine.Split(new char[] { '=' }, 2);
+                        if (tempSplit.Length == 2)
+                        {
+                            result.Add(tempSplit[0], tempSplit[1]);
+                        }
                     }
                 }
+                recievedData.Close();
+                dataStream.Close();
             }
-            recievedData.Close();
-            dataStream.Close();
+            catch (WebException e)
+            {
+                System.Windows.MessageBox.Show("The launcher cannot connect to the server containing the patch info");
+                offlineMode = true;
+            }
             return result;
         }
     }

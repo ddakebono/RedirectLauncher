@@ -35,7 +35,7 @@ namespace RedirectLauncherMk2_WPF
             this.progressBar = progressBar;
             this.clientVersionBlock = clientVersionBlock;
             isUpdateInProgress = true;
-            if (client.clientModVersion < client.remoteClientModVersion || !doesModpackFileExist())
+            if ((client.clientModVersion < client.remoteClientModVersion || !doesModpackFileExist()) && !client.offlineMode)
             {
                 if (MessageBox.Show("It appears your client's mod package file is outdated or missing.\nWould you like to download the latest?", "Update", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {

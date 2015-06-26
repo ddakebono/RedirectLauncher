@@ -55,7 +55,7 @@ namespace RedirectLauncherMk2_WPF
         {
             modUpdater.startModUpdate(ProgressBar, ClientVersionBlock);
             clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock);
-            if (client.clientVersion == client.remoteClientVersion && ((client.clientModVersion == client.remoteClientModVersion && modUpdater.doesModpackFileExist() && !modUpdater.isUpdateInProgress) || (modUpdater.hasUserSkippedUpdate)) && !clientUpdater.isUpdateInProgress)
+            if (client.clientVersion >= client.remoteClientVersion && ((client.clientModVersion >= client.remoteClientModVersion && modUpdater.doesModpackFileExist() && !modUpdater.isUpdateInProgress) || (modUpdater.hasUserSkippedUpdate)) && !clientUpdater.isUpdateInProgress)
             {
                 client.LaunchGame();
             }

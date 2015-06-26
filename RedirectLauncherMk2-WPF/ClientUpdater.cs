@@ -50,7 +50,7 @@ namespace RedirectLauncherMk2_WPF
 
         public void checkClientUpdate(ProgressBar progressBar, TextBlock clientVersionBlock)
         {
-            if (client.clientVersion < client.remoteClientVersion)
+            if (client.clientVersion < client.remoteClientVersion && !client.offlineMode)
             {
                 if (MessageBox.Show("It appears your client is out of date!\nWould you like to update to the latest client version?", "Update", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
