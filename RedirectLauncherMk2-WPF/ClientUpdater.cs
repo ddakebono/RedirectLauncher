@@ -39,6 +39,8 @@ namespace RedirectLauncherMk2_WPF
         private int extractionFinished = 0;
         public bool isUpdateInProgress = false;
         private bool fullClientUpdate = false;
+        private TextBlock statusBlock;
+        private TextBlock statusPercentBlock;
         private Dictionary<String, String> updatePartHashes = new Dictionary<string,string>();
 
         public ClientUpdater(Mabinogi client)
@@ -48,7 +50,7 @@ namespace RedirectLauncherMk2_WPF
             this.updateExtractDirectory = new DirectoryInfo(updateDirectory.FullName + "\\extracted");
         }
 
-        public void checkClientUpdate(ProgressBar progressBar, TextBlock clientVersionBlock)
+        public void checkClientUpdate(ProgressBar progressBar, TextBlock clientVersionBlock, TextBlock statusBlock, TextBlock statusPercentBlock)
         {
             if (client.clientVersion < client.remoteClientVersion && !client.offlineMode)
             {
@@ -67,6 +69,10 @@ namespace RedirectLauncherMk2_WPF
                     }
                     this.clientVersionBlock = clientVersionBlock;
                     this.progressBar = progressBar;
+                    this.statusBlock = statusBlock;
+                    this.statusPercentBlock = statusPercentBlock;
+                    statusBlock.Text = "Starting client update";
+                    statusPercentBlock.Text = "(0%)";
                     prepareUpdateDirectory();
                     if(client.clientVersion<client.remoteClientVersion)
                         startClientUpdate(null, null);
@@ -92,12 +98,14 @@ namespace RedirectLauncherMk2_WPF
                     if (!triedUpdateFile)
                     {
                         triedUpdateFile = true;
+                        statusBlock.Text = "Attempting to get package list for upgrade " + client.clientVersion.ToString() + " to version" + client.remoteClientVersion.ToString();
                         downloadFileFromFtp(client.remoteClientVersion + "/" + localToRemote + ".txt", updateDirectory.FullName + "\\update.txt", host, new AsyncCompletedEventHandler(startClientUpdate));
                     }
                     else
                     {
                         //Trigger full client redownload
                         localToRemote = client.remoteClientVersion + "_full";
+                        statusBlock.Text = "Starting full client download...";
                         downloadFileFromFtp(client.remoteClientVersion + "/" + client.remoteClientVersion + "_full.txt", updateDirectory.FullName + "\\update.txt", host, new AsyncCompletedEventHandler(startClientUpdate));
                     }
                 }
@@ -111,6 +119,7 @@ namespace RedirectLauncherMk2_WPF
         {
             if (updatePartsDownloaded < updateParts)
             {
+                statusBlock.Text = "Downloading update part " + localToRemote + "." + updatePartsDownloaded.ToString("000");
                 downloadFileFromFtp(client.remoteClientVersion + "/" + localToRemote + "." + updatePartsDownloaded.ToString("000"), updateDirectory.FullName + "\\" + localToRemote + "." + updatePartsDownloaded.ToString("000"), host, new AsyncCompletedEventHandler(downloadClientUpdateParts));
                 updatePartsDownloaded++;
             }
@@ -130,10 +139,12 @@ namespace RedirectLauncherMk2_WPF
                         badFileCorrectionAttempt++;
                         String badFile = (String)badFiles.Dequeue();
                         File.Delete(updateDirectory.FullName + "\\" + badFile);
+                        statusBlock.Text = "Redownloading update part " + badFile;
                         downloadFileFromFtp(client.remoteClientVersion + "/" + badFile, updateDirectory.FullName + "\\" + badFile, host, new AsyncCompletedEventHandler(downloadClientUpdateParts));
                     }
                     else
                     {
+                        statusBlock.Text = "Update Failed!";
                         MessageBox.Show("It seems that the package files are corrupted, even after 3 download attempts, please try to patch using a different launcher or try again later...");
                     }
                 }
@@ -145,12 +156,15 @@ namespace RedirectLauncherMk2_WPF
                 if (checkedForBadFiles && badFiles.Count == 0 && File.Exists(updateDirectory.FullName + "\\language.zip"))
                 {
                     //Download complete merge and install
+                    statusBlock.Text = "Merging update parts";
                     mergeUpdateParts();
+                    statusBlock.Text = "Extracting update files to temp directory";
                     ExtractFile(updateDirectory.FullName + "\\update.zip", updateExtractDirectory.FullName);
                     ExtractFile(updateDirectory.FullName + "\\language.zip", updateExtractDirectory.FullName + "\\package\\");
                 }
                 else
                 {
+                    statusBlock.Text = "Downloading language pack for the new version";
                     downloadFileFromFtp(client.remoteClientVersion + "/" + client.remoteClientVersion + "_language.p_", updateDirectory.FullName + "\\language.zip", host, new AsyncCompletedEventHandler(downloadClientUpdateParts));
                 }
             }
@@ -170,6 +184,7 @@ namespace RedirectLauncherMk2_WPF
             {
                 if (extractionFinished > 0)
                 {
+                    statusBlock.Text = "Installing updates";
                     moveExtractedDataToClient();
                     client.writeVersionData(client.remoteClientVersion, clientVersionBlock);
                 }
@@ -185,10 +200,14 @@ namespace RedirectLauncherMk2_WPF
             if (e.Cancelled)
             {
                 MessageBox.Show("The patch install operation was canceled!");
+                statusBlock.Text = "Update Interrupted";
+                statusPercentBlock.Text = "";
             }
             else if (!(e.Error == null))
             {
                 MessageBox.Show("The background worker operation moving the patch data has encountered an error, please retry the patch!");
+                statusBlock.Text = "Update Failed!";
+                statusPercentBlock.Text = "";
                 throw e.Error;
             }
             else
@@ -196,6 +215,8 @@ namespace RedirectLauncherMk2_WPF
                 updateDirectory.Delete(true);
                 isUpdateInProgress = false;
                 MessageBox.Show("The patch has been completed successfully, you may now launch the client!");
+                statusBlock.Text = "Ready to launch!";
+                statusPercentBlock.Text = "";
             }
         }
 
@@ -241,6 +262,7 @@ namespace RedirectLauncherMk2_WPF
             worker.ProgressChanged += (o, e) =>
             {
                 progressBar.Value = e.ProgressPercentage;
+                statusPercentBlock.Text = "(" + e.ProgressPercentage.ToString() + "%)";
             };
             worker.DoWork += (o, e) =>
             {
@@ -268,6 +290,7 @@ namespace RedirectLauncherMk2_WPF
             worker.ProgressChanged += (o, e) =>
             {
                 progressBar.Value = e.ProgressPercentage;
+                statusPercentBlock.Text = "(" + e.ProgressPercentage.ToString() + "%)";
             };
             worker.DoWork += (o, e) =>
             {
@@ -298,6 +321,7 @@ namespace RedirectLauncherMk2_WPF
         private void progressUpdate(object sender, DownloadProgressChangedEventArgs e)
         {
             progressBar.Value = e.ProgressPercentage;
+            statusPercentBlock.Text = "(" + e.ProgressPercentage.ToString() + "%)";
         }
 
         private void readUpdateListFile()

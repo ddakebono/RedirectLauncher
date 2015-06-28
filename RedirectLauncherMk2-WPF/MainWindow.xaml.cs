@@ -48,13 +48,14 @@ namespace RedirectLauncherMk2_WPF
             RemoteLauncherVersionBlock.Text = client.remoteLauncherVersion.ToString();
             WebBlock.Source = new Uri(client.launcherWebpage);
             TitleBlock.Text = client.launcherName;
-            updater.checkLauncherUpdates(ProgressBar);
+            updater.checkLauncherUpdates(ProgressBar, StatusBlock);
+            StatusBlock.Text = "Ready to Launch!";
         }
 
         private void LaunchGame(object sender, RoutedEventArgs e)
         {
-            modUpdater.startModUpdate(ProgressBar, ClientVersionBlock);
-            clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock);
+            modUpdater.startModUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
+            clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
             if (client.clientVersion >= client.remoteClientVersion && ((client.clientModVersion >= client.remoteClientModVersion && modUpdater.doesModpackFileExist() && !modUpdater.isUpdateInProgress) || (modUpdater.hasUserSkippedUpdate)) && !clientUpdater.isUpdateInProgress)
             {
                 client.LaunchGame();

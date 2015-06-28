@@ -24,14 +24,18 @@ namespace RedirectLauncherMk2_WPF
         private TextBlock clientVersionBlock;
         public bool isUpdateInProgress = false;
         public bool hasUserSkippedUpdate = false;
+        private TextBlock statusBlock;
+        private TextBlock statusPercentBlock;
 
         public ModUpdater(Mabinogi client)
         {
             this.client = client;
         }
 
-        public bool startModUpdate(ProgressBar progressBar, TextBlock clientVersionBlock)
+        public bool startModUpdate(ProgressBar progressBar, TextBlock clientVersionBlock, TextBlock statusBlock, TextBlock statusPercentBlock)
         {
+            this.statusBlock = statusBlock;
+            this.statusPercentBlock = statusPercentBlock;
             this.progressBar = progressBar;
             this.clientVersionBlock = clientVersionBlock;
             isUpdateInProgress = true;
@@ -39,6 +43,7 @@ namespace RedirectLauncherMk2_WPF
             {
                 if (MessageBox.Show("It appears your client's mod package file is outdated or missing.\nWould you like to download the latest?", "Update", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
+                    statusBlock.Text = "Updating modpack to version " + client.remoteClientModVersion;
                     if (doesModpackFileExist())
                         File.Delete(client.clientDirectory + "\\package\\zzzRedirectModpack-" + client.clientModVersion.ToString() + ".pack");
                     downloadFileFromWeb("package/modpack-" + client.remoteClientModVersion, client.clientDirectory + "\\package\\zzzRedirectModpack-" + client.remoteClientModVersion + ".pack", client.launcherModRepo);
@@ -75,12 +80,15 @@ namespace RedirectLauncherMk2_WPF
         private void progressUpdate(object sender, DownloadProgressChangedEventArgs e)
         {
             progressBar.Value = e.ProgressPercentage;
+            statusPercentBlock.Text = "(" + e.ProgressPercentage.ToString() + "%)";
         }
         private void downloadComplete(object sender, AsyncCompletedEventArgs e)
         {
             client.writeModVersionData(client.remoteClientModVersion, clientVersionBlock);
             isUpdateInProgress = false;
             MessageBox.Show("Download of the latest mod package is done!\nYou may now launch the client.");
+            statusBlock.Text = "Ready to launch!";
+            statusPercentBlock.Text = "";
         }
 
     }

@@ -24,6 +24,7 @@ namespace RedirectLauncherMk2_WPF
         private int localLauncherVersion;
         private int remoteLauncherVersion;
         private ProgressBar progressBar;
+        private TextBlock statusBlock;
 
         public SelfUpdater(String launcherRepoUrl, int localLauncherVersion, int remoteLauncherVersion)
         {
@@ -32,11 +33,13 @@ namespace RedirectLauncherMk2_WPF
             this.remoteLauncherVersion = remoteLauncherVersion;
         }
 
-        public void checkLauncherUpdates(ProgressBar progressBar)
+        public void checkLauncherUpdates(ProgressBar progressBar, TextBlock statusBlock)
         {
             this.progressBar = progressBar;
+            this.statusBlock = statusBlock;
             if (localLauncherVersion < remoteLauncherVersion)
             {
+                statusBlock.Text = "Updating the Launcher (0%)";
                 downloadLauncher(remoteLauncherVersion);
             }
             else
@@ -76,6 +79,7 @@ namespace RedirectLauncherMk2_WPF
         private void progressUpdate(object sender, DownloadProgressChangedEventArgs e)
         {
             progressBar.Value = e.ProgressPercentage;
+            statusBlock.Text = "Updating the Launcher (" + e.ProgressPercentage + "%)";
         }
     }
 }
