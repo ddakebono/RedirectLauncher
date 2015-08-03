@@ -19,7 +19,7 @@ namespace RedirectLauncherMk2_WPF
 {
     class ModUpdater
     {
-        private Mabinogi client;
+        private Game client;
         private ProgressBar progressBar;
         private TextBlock clientVersionBlock;
         public bool isUpdateInProgress = false;
@@ -27,7 +27,7 @@ namespace RedirectLauncherMk2_WPF
         private TextBlock statusBlock;
         private TextBlock statusPercentBlock;
 
-        public ModUpdater(Mabinogi client)
+        public ModUpdater(Game client)
         {
             this.client = client;
         }

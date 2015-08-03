@@ -21,7 +21,7 @@ using System.Windows.Markup;
 
 namespace RedirectLauncherMk2_WPF
 {
-    class Mabinogi
+    class Game
     {
         //Client data
         public int clientVersion;
@@ -45,12 +45,13 @@ namespace RedirectLauncherMk2_WPF
         //Extra data
         public int code = 1622;
         public String crackShield = "HSLaunch.exe";
+        const String gameBinary = "client.exe";
 
 
-        public Mabinogi(String patchURL)
+        public Game(String patchURL)
         {
             //Get local data
-            clientDirectory = locateMabinogiClientDirectory();
+            clientDirectory = locateGameClientDirectory();
             if (File.Exists(clientDirectory + "\\version.dat"))
             {
                 clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
@@ -85,11 +86,11 @@ namespace RedirectLauncherMk2_WPF
                 crackShieldStart.FileName = clientDirectory + "\\" + crackShield;
                 Process.Start(crackShieldStart);
             }
-            if (File.Exists(clientDirectory + "\\client.exe") && Process.GetProcessesByName("client.exe").Length == 0) 
+            if (File.Exists(clientDirectory + "\\" + gameBinary) && Process.GetProcessesByName(gameBinary).Length == 0) 
             {
                 ProcessStartInfo mabiLaunch = new ProcessStartInfo();
                 mabiLaunch.Arguments = launchArgs;
-                mabiLaunch.FileName = clientDirectory + "\\client.exe";
+                mabiLaunch.FileName = clientDirectory + "\\" + gameBinary;
                 Process.Start(mabiLaunch);
                 System.Environment.Exit(0);
             }
@@ -104,7 +105,7 @@ namespace RedirectLauncherMk2_WPF
             return remoteClientVersion + "." + remoteClientModVersion;
         }
 
-        private String locateMabinogiClientDirectory()
+        private String locateGameClientDirectory()
         {
             RegistryKey mabinogiRegistry = Registry.CurrentUser.OpenSubKey(@"Software\Nexon\Mabinogi", true);
             String redirectRegKey = (String)mabinogiRegistry.GetValue("RDClientRoot");
@@ -229,7 +230,7 @@ namespace RedirectLauncherMk2_WPF
             }
             catch (KeyNotFoundException e)
             {
-                launcherName = "Redirect Gaming Mabinogi Launcher";
+                launcherName = "Redirect Gaming Launcher";
             }
             try
             {

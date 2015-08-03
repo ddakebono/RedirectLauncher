@@ -29,7 +29,7 @@ Please fill issue report on http://git.potato.moe/potato-san/Redirect-Launcher-m
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="TitleBlock" Grid.Column="0" TextWrapping="Wrap" Text="Redirect Gaming Mabinogi Launcher" VerticalAlignment="Top" FontSize="20" FontWeight="Thin"/>
+                <TextBlock x:Name="TitleBlock" Grid.Column="0" TextWrapping="Wrap" Text="Redirect Gaming Launcher" VerticalAlignment="Top" FontSize="20" FontWeight="Thin"/>
                 <metro:SystemButtons Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top"/>
 
             </Grid>

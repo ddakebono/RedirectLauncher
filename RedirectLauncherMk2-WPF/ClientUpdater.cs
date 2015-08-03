@@ -22,7 +22,7 @@ namespace RedirectLauncherMk2_WPF
 {
     class ClientUpdater
     {
-        private Mabinogi client;
+        private Game client;
         private DirectoryInfo updateDirectory;
         private DirectoryInfo updateExtractDirectory;
         private ProgressBar progressBar;
@@ -43,7 +43,7 @@ namespace RedirectLauncherMk2_WPF
         private TextBlock statusPercentBlock;
         private Dictionary<String, String> updatePartHashes = new Dictionary<string,string>();
 
-        public ClientUpdater(Mabinogi client)
+        public ClientUpdater(Game client)
         {
             this.client = client;
             this.updateDirectory = new DirectoryInfo(System.Environment.CurrentDirectory + "\\rdlauncherMabiUpdaterTemp");
