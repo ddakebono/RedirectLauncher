@@ -108,23 +108,34 @@ namespace RedirectLauncherMk2_WPF
         private String locateGameClientDirectory()
         {
             RegistryKey mabinogiRegistry = Registry.CurrentUser.OpenSubKey(@"Software\Nexon\Mabinogi", true);
-            String redirectRegKey = (String)mabinogiRegistry.GetValue("RDClientRoot");
-            String mabiRegDirectory = (String)mabinogiRegistry.GetValue("");
-            String steamCommon = (String)Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam", false).GetValue("SteamPath") + "\\steamapps\\common\\Mabinogi";
+            RegistryKey steamRegistry = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam", false);
+            String redirectRegKey = null;
+            String mabiRegDirectory = null;
+            String steamCommon = null;
+            if (mabinogiRegistry == null)
+            {
+                mabinogiRegistry = Registry.CurrentUser.CreateSubKey(@"Software\Nexon\Mabinogi");
+            }
+            redirectRegKey = (String)mabinogiRegistry.GetValue("RDClientRoot");
+            mabiRegDirectory = (String)mabinogiRegistry.GetValue("");
+            if (steamRegistry != null)
+            {
+                steamCommon = (String)steamRegistry.GetValue("SteamPath") + "\\steamapps\\common\\Mabinogi";
+            }
             String result;
-            if (File.Exists(redirectRegKey + "\\version.dat"))
+            if (redirectRegKey != null && File.Exists(redirectRegKey + "\\version.dat"))
             {
                 //This will be set once the launcher is run for the first time.
                 result = redirectRegKey;
             }
             else
             {
-                if (File.Exists(mabiRegDirectory + "\\version.dat"))
+                if (mabiRegDirectory != null && File.Exists(mabiRegDirectory + "\\version.dat"))
                 {
                     //If mabi exists in it's default directory
                     result = mabiRegDirectory;
                 }
-                else if (File.Exists(steamCommon + "\\version.dat"))
+                else if (steamCommon != null && File.Exists(steamCommon + "\\version.dat"))
                 {
                     //If mabi is installed from steam
                     result = steamCommon;
