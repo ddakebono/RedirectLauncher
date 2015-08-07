@@ -324,6 +324,23 @@ namespace RedirectLauncherMk2_WPF
                 System.Windows.MessageBox.Show("The launcher cannot connect to the server containing the patch info");
                 offlineMode = true;
             }
+            //Overrides from the launchers arguments
+            String[] overrideArguments = Environment.GetCommandLineArgs();
+            for (int i = 0; i < overrideArguments.Length; i++)
+            {
+                String[] tempSplit = overrideArguments[i].Trim().Split(new char[] {'='}, 2);
+                if (tempSplit.Length == 2)
+                {
+                    try
+                    {
+                        result[tempSplit[0]] = tempSplit[1];
+                    }
+                    catch (KeyNotFoundException e)
+                    {
+                        result.Add(tempSplit[0], tempSplit[1]);
+                    }
+                }
+            }
             return result;
         }
     }
