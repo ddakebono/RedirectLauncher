@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="Version" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">17</Value>
+      <Value Profile="(Default)">18</Value>
     </Setting>
   </Settings>
 </SettingsFile>
