@@ -6,6 +6,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,7 @@ namespace RedirectLauncherMk2_WPF
         private ClientUpdater clientUpdater;
         private ModUpdater modUpdater;
         private SelfUpdater updater;
+        private bool pageHasLoaded = false;
 
         public MainWindow()
         {
@@ -60,6 +62,17 @@ namespace RedirectLauncherMk2_WPF
             {
                 client.LaunchGame();
             }
+        }
+
+        private void handleLinks(object sender, NavigatingCancelEventArgs e)
+        {
+            if (!pageHasLoaded)
+            {
+                pageHasLoaded = true;
+                return;
+            }
+            e.Cancel = true;
+            Process.Start(e.Uri.ToString());
         }
     }
 }

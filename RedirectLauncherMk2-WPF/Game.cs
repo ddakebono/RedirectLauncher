@@ -45,6 +45,7 @@ namespace RedirectLauncherMk2_WPF
         //Extra data
         public int code = 1622;
         public String crackShield = "HSLaunch.exe";
+        public String devtools = "Morrighan.exe";
         const String gameBinary = "client.exe";
 
 
@@ -90,7 +91,14 @@ namespace RedirectLauncherMk2_WPF
             {
                 ProcessStartInfo mabiLaunch = new ProcessStartInfo();
                 mabiLaunch.Arguments = launchArgs;
-                mabiLaunch.FileName = clientDirectory + "\\" + gameBinary;
+                if (File.Exists(clientDirectory + "\\" + devtools))
+                {
+                    mabiLaunch.FileName = clientDirectory + "\\" + devtools;
+                }
+                else
+                {
+                    mabiLaunch.FileName = clientDirectory + "\\" + gameBinary;
+                }
                 Process.Start(mabiLaunch);
                 System.Environment.Exit(0);
             }
