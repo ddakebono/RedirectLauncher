@@ -22,57 +22,77 @@ using System.Windows.Shapes;
 
 namespace RedirectLauncherMk2_WPF
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow
-    {
-        private Game client = new Game("http://aurares.potato.moe/patchdata.txt");
-        private ClientUpdater clientUpdater;
-        private ModUpdater modUpdater;
-        private SelfUpdater updater;
-        private bool pageHasLoaded = false;
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow
+	{
+		private const string PATCH_URL = "http://aurares.potato.moe/patchdata.txt";
+		private Game client = new Game();
+		private ClientUpdater clientUpdater;
+		private ModUpdater modUpdater;
+		private SelfUpdater updater;
+		private bool pageHasLoaded = false;
 
-        public MainWindow()
-        {
-            updater = new SelfUpdater(client.launcherRepo, Properties.Settings.Default.Version, client.remoteLauncherVersion);
-            clientUpdater = new ClientUpdater(client);
-            modUpdater = new ModUpdater(client);
+		public MainWindow()
+		{
+			InitializeComponent();
+		}
 
-            InitializeComponent();
-        }
+		private void windowIsReady(object sender, EventArgs e)
+		{
+			client.loadNewPatchUrl(PATCH_URL);
+			reloadElements();
+			updater = new SelfUpdater(client.launcherRepo, Properties.Settings.Default.Version, client.remoteLauncherVersion);
+			updater.checkLauncherUpdates(ProgressBar, StatusBlock);
+			clientUpdater = new ClientUpdater(client);
+			modUpdater = new ModUpdater(client);
+			reloadElements();
+			StatusBlock.Text = "Ready to Launch!";
+		}
 
-        private void windowIsReady(object sender, EventArgs e)
-        {
-            ClientVersionBlock.Text = client.getLocalClientVersionString();
-            LauncherVersionBlock.Text = Properties.Settings.Default.Version.ToString();
-            RemoteClientVersionBlock.Text = client.getRemoteClientVersionString();
-            RemoteLauncherVersionBlock.Text = client.remoteLauncherVersion.ToString();
-            WebBlock.Source = new Uri(client.launcherWebpage);
-            TitleBlock.Text = client.launcherName;
-            updater.checkLauncherUpdates(ProgressBar, StatusBlock);
-            StatusBlock.Text = "Ready to Launch!";
-        }
+		public void reloadElements()
+		{
+			ClientVersionBlock.Text = client.getLocalClientVersionString();
+			LauncherVersionBlock.Text = Properties.Settings.Default.Version.ToString();
+			RemoteClientVersionBlock.Text = client.getRemoteClientVersionString();
+			RemoteLauncherVersionBlock.Text = client.remoteLauncherVersion.ToString();
+			pageHasLoaded = false;
+			WebBlock.Source = new Uri(client.launcherWebpage);
+			TitleBlock.Text = client.launcherName;
+		}
 
-        private void LaunchGame(object sender, RoutedEventArgs e)
-        {
-            modUpdater.startModUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
-            clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
-            if (client.clientVersion >= client.remoteClientVersion && ((client.clientModVersion >= client.remoteClientModVersion && modUpdater.doesModpackFileExist() && !modUpdater.isUpdateInProgress) || (modUpdater.hasUserSkippedUpdate)) && !clientUpdater.isUpdateInProgress)
-            {
-                client.LaunchGame();
-            }
-        }
+		private void LaunchGame(object sender, RoutedEventArgs e)
+		{
+			clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
+			modUpdater.startModUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
+			if (client.clientVersion >= client.remoteClientVersion && ((client.clientModVersion >= client.remoteClientModVersion && modUpdater.doesModpackFileExist() && !modUpdater.isUpdateInProgress) || (modUpdater.hasUserSkippedUpdate)) && !clientUpdater.isUpdateInProgress)
+			{
+				client.LaunchGame();
+			}
+		}
 
-        private void handleLinks(object sender, NavigatingCancelEventArgs e)
-        {
-            if (!pageHasLoaded)
-            {
-                pageHasLoaded = true;
-                return;
-            }
-            e.Cancel = true;
-            Process.Start(e.Uri.ToString());
-        }
-    }
+		private void handleLinks(object sender, NavigatingCancelEventArgs e)
+		{
+			if (!pageHasLoaded)
+			{
+				pageHasLoaded = true;
+				return;
+			}
+			e.Cancel = true;
+			Process.Start(e.Uri.ToString());
+		}
+
+		private void OpenAboutWindow(object sender, RoutedEventArgs e)
+		{
+			About about = new About();
+			about.Show();
+		}
+
+		private void OpenOptionsWindow(object sender, RoutedEventArgs e)
+		{
+			Options options = new Options();
+			options.Show();
+		}
+	}
 }

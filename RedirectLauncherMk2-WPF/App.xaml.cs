@@ -15,15 +15,15 @@ using MetroRadiance;
 
 namespace RedirectLauncherMk2_WPF
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
-    {
-        protected void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-            ThemeService.Current.Initialize(this, Theme.Dark, Accent.Purple);
-        }
-    }
+	/// <summary>
+	/// Interaction logic for App.xaml
+	/// </summary>
+	public partial class App : Application
+	{
+		protected void OnStartup(StartupEventArgs e)
+		{
+			base.OnStartup(e);
+			ThemeService.Current.Initialize(this, Theme.Dark, Accent.Purple);
+		}
+	}
 }
