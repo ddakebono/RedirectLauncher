@@ -28,10 +28,10 @@ namespace RedirectLauncherMk2_WPF
 			
 		}
 
-		private void HyperlinkClicked(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+		private void HyperlinkClik(object sender, RoutedEventArgs e)
 		{
-			Process.Start(e.Uri.ToString());
-			e.Handled = true;
+			Process.Start("http://git.potato.moe/potato-san/Redirect-Launcher-mk2/");
 		}
+
 	}
 }

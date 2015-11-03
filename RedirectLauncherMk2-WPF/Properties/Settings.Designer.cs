@@ -23,15 +23,21 @@ namespace RedirectLauncherMk2_WPF.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("20")]
         public int Version {
             get {
                 return ((int)(this["Version"]));
             }
-            set {
-                this["Version"] = value;
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://aurares.potato.moe/patchdata.txt")]
+        public string DefaultPatchdata {
+            get {
+                return ((string)(this["DefaultPatchdata"]));
             }
         }
     }

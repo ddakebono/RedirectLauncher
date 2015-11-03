@@ -27,11 +27,11 @@ namespace RedirectLauncherMk2_WPF
 	/// </summary>
 	public partial class MainWindow
 	{
-		private const string PATCH_URL = "http://aurares.potato.moe/patchdata.txt";
-		private Game client = new Game();
+		public Game client = new Game();
 		private ClientUpdater clientUpdater;
 		private ModUpdater modUpdater;
 		private SelfUpdater updater;
+		private List<Servers> serverList;
 		private bool pageHasLoaded = false;
 
 		public MainWindow()
@@ -41,7 +41,8 @@ namespace RedirectLauncherMk2_WPF
 
 		private void windowIsReady(object sender, EventArgs e)
 		{
-			client.loadNewPatchUrl(PATCH_URL);
+
+			client.loadNewPatchUrl(Properties.Settings.Default.DefaultPatchdata);
 			reloadElements();
 			updater = new SelfUpdater(client.launcherRepo, Properties.Settings.Default.Version, client.remoteLauncherVersion);
 			updater.checkLauncherUpdates(ProgressBar, StatusBlock);
@@ -86,13 +87,14 @@ namespace RedirectLauncherMk2_WPF
 		private void OpenAboutWindow(object sender, RoutedEventArgs e)
 		{
 			About about = new About();
-			about.Show();
+			about.ShowDialog();
 		}
 
 		private void OpenOptionsWindow(object sender, RoutedEventArgs e)
 		{
-			Options options = new Options();
-			options.Show();
+			Options options = new Options(client);
+			options.ShowDialog();
+			reloadElements();
 		}
 	}
 }

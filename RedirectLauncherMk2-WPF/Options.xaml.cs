@@ -20,9 +20,22 @@ namespace RedirectLauncherMk2_WPF
 	/// </summary>
 	public partial class Options : MetroWindow
 	{
-		public Options()
+		public Game client;
+
+		public Options(Game client)
 		{
+			this.client = client;
 			InitializeComponent();
+		}
+
+		private void Apply(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void Cancel(object sender, RoutedEventArgs e)
+		{
+			this.Close();
 		}
 	}
 }

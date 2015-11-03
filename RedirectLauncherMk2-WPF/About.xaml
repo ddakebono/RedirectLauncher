@@ -5,8 +5,8 @@
         xmlns:chrome="http://schemes.grabacr.net/winfx/2014/chrome"
         Background="{DynamicResource ThemeBrushKey}"
 		Foreground="{DynamicResource ActiveForegroundBrushKey}"
-        Title="Options" Height="400" Width="300" UseLayoutRounding="True" ResizeMode="NoResize">
-    <Grid>
+        Title="Options" Height="400" Width="300" UseLayoutRounding="True" ResizeMode="NoResize" IsHitTestVisible="True">
+    <Grid IsHitTestVisible="True">
         <Border Grid.Row="0" metro:MetroWindow.IsCaptionBar="True" Grid.ColumnSpan="2">
             <Grid Margin="10,0,0,0">
                 <Grid.ColumnDefinitions>
@@ -19,25 +19,21 @@
             </Grid>
         </Border>
         <Grid>
-            <RichTextBox x:Name="TextBox" Grid.ColumnSpan="3" VerticalAlignment="Top" Margin="0,32,10,0" Height="329" BorderThickness="0" Background="Transparent" IsDocumentEnabled="True">
-                <FlowDocument TextAlignment="Center" Foreground="White">
-                    <Paragraph>
-                        Redirect Launcher Version -
-                        <Run Text="{Binding Text}"/>
-                        <Run Text="&#10;&#10;"/>
-                        The Redirect Launcher is developed by Owen Bennett (Ripxfrostbite).
-                        <Run Text="&#10;"/>
-                        launcher is open source software and licenced under the MIT licence.
-                        <Run Text="&#10;"/>
-                        <Run Text="&#10;"/>
-                        To submit bug reports please visit
-                        <Run Text="&#10;"/>
-                        <Hyperlink NavigateUri="http://git.potato.moe/potato-san/Redirect-Launcher-mk2/" RequestNavigate="HyperlinkClicked">
-                            http://git.potato.moe/potato-san/Redirect-Launcher-mk2/
-                        </Hyperlink>
-                    </Paragraph>
-                </FlowDocument>
-            </RichTextBox>
+            <TextBlock TextAlignment="Center" HorizontalAlignment="Left" Margin="10,62,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="309" Width="274">
+                Redirect Launcher Version - <Run Text="{Binding Text}"/>
+                <Run Text="&#10;"/><Run Text="&#10;"/>
+                Developed by Owen Bennett (Ripxfrostbite)
+                <Run Text="&#10;"/><Run Text="&#10;"/>
+                This launcher is open source software and is licenced under the MIT licence.
+                <Run Text="&#10;"/><Run Text="&#10;"/>
+                To report issues or to request additions to the launcher please visit the Gitlab over at :
+                <Run Text="&#10;"/>
+                <Run Text="&#10;"/>
+                http://git.potato.moe/potato-san/Redirect-Launcher-mk2/
+                <Run Text="&#10;"/>
+                (I would make it a link but WPF hates me)
+            </TextBlock>
+
         </Grid>
     </Grid>
 </metro:MetroWindow>

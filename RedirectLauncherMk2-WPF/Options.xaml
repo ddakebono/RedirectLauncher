@@ -6,16 +6,52 @@
         Background="{DynamicResource ThemeBrushKey}"
 		Foreground="{DynamicResource ActiveForegroundBrushKey}"
         Title="Options" Height="400" Width="300" UseLayoutRounding="True" ResizeMode="NoResize">
-    <Border Grid.Row="0" metro:MetroWindow.IsCaptionBar="True" Grid.ColumnSpan="2">
-        <Grid Margin="10,0,0,0">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" metro:MetroWindow.IsCaptionBar="True" Grid.ColumnSpan="2">
+            <Grid Margin="10,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="TitleBlock" Grid.Column="0" TextWrapping="Wrap" Text="Options" VerticalAlignment="Top" FontSize="20" FontWeight="Thin"/>
+                <metro:SystemButtons Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+            </Grid>
+        </Border>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock x:Name="TitleBlock" Grid.Column="0" TextWrapping="Wrap" Text="Options" VerticalAlignment="Top" FontSize="20" FontWeight="Thin"/>
-            <metro:SystemButtons Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top"/>
-
+            <ComboBox x:Name="ServerList" HorizontalAlignment="Stretch" Grid.Row="0" Margin="10,0,0,0"/>
+            <Label Content="Server Selection" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1"/>
+            <TextBox x:Name="CustomLogip" HorizontalAlignment="Stretch" Height="23" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,0,0,0"/>
+            <Label Content="Custom Login Address" Grid.Row="2" HorizontalAlignment="Center" Grid.Column="1" Foreground="White"/>
+            <CheckBox x:Name="HShield" Content="Launch HShield" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Top"/>
+            <CheckBox x:Name="Proxy" Content="Launch Proxy" HorizontalAlignment="Center" Grid.Row="4" Grid.Column="1" VerticalAlignment="Top"/>
         </Grid>
-    </Border>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="Apply" Content="Apply" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom" Grid.Column="0" Click="Apply"/>
+            <Button x:Name="Cancel" Content="Cancel" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom" Grid.Column="1" Click="Cancel"/>
+        </Grid>
+    </Grid>
 </metro:MetroWindow>
