@@ -1,4 +1,10 @@
-﻿using MetroRadiance.Controls;
+﻿/*
+* Copyright 2015 Owen Bennett
+* This file is a part of the RedirectLauncher by Owen Bennett.
+* All code contained in here is licensed under the MIT license.
+* Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
+*/
+using MetroRadiance.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;

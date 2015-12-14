@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+* Copyright 2015 Owen Bennett
+* This file is a part of the RedirectLauncher by Owen Bennett.
+* All code contained in here is licensed under the MIT license.
+* Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

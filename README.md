@@ -49,9 +49,12 @@ Along with the patch info file being hosted you need the following directories t
 > http://webhost-url/patchdata/launcher - This contains the launcher updates, the launcher expects the following naming on updates launcher-x.exe X being the version. (ex. launcher-11.exe)  
 > http://webhost-url/patchdata/package - This contains the modpack package files, the launcher expects the following naming on modpack files modpack-x X being the version (ex. modpack-1)  
 
-Once this file is hosted you just need to change the URL the launcher points at in MainWindow.xaml.cs.  
+Once this file is hosted you just need to change the Servers.json file to include your server.
+The Servers.json can contain multiple servers that can be selected by the user, each server element contains a few variables to ensure proper display.
+The variables are name, patchdata, launcherPage, resHeight, and resWidth.
+Only name and patchdata are needed, the other 3 are optional and are mostly for compatability purposes with official servers.
 
-After the file is hosted and the directories added you can simply launch the launcher with your patch info URL from any folder.  
+After the file is hosted and the directories added you can simply launch the launcher from any folder.  
 It will automatically find the client, if it can't it will ask you where it is, if none exists just select any folder and the launcher will download the latest client to C:\Nexon\Mabinogi.  
 
 Misc
@@ -66,7 +69,7 @@ License
 MetroRadiance, MetroRadiance.Core and MetroRadiance.Chrome were created by Grabacr07 (<a href="https://github.com/Grabacr07/MetroRadiance">https://github.com/Grabacr07/MetroRadiance</a>)  
 MetroRadiance is licensed under the MIT License.
 
-The Launcher also relies on DotNetZip, which I can't find the license for cause the codeplex for it is dead right now.
+The Launcher also relies on DotNetZip, which is licenced under the Microsoft Public Licence.
 
 All of my code in this launcher is licensed under the MIT License  
 <a href="http://opensource.org/licenses/MIT">http://opensource.org/licenses/MIT</a>
