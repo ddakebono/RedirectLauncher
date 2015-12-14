@@ -53,20 +53,18 @@ namespace RedirectLauncherMk2_WPF
 			WebClient w = new WebClient();
 			w.DownloadFileCompleted += new AsyncCompletedEventHandler(downloadComplete);
 			w.DownloadProgressChanged += new DownloadProgressChangedEventHandler(progressUpdate);
-			w.DownloadFileAsync(new Uri(launcherRepoUrl + "launcher-" + version + ".exe"), @"launcherUpdate.tmp");
+			w.DownloadFileAsync(new Uri(launcherRepoUrl + "launcher-" + version + ".exe"), @"launcherUpdate.exe");
 		}
 
 		//Async download functions
 		private void downloadComplete(object sender, AsyncCompletedEventArgs e)
 		{
-			FileInfo f = new FileInfo("launcherUpdate.tmp");
+			FileInfo f = new FileInfo("launcherUpdate.exe");
 			if (f.Length > 0)
 			{
 				ProcessStartInfo p = new ProcessStartInfo();
-				p.Arguments = "/C choice /C Y /N /D Y /T 3 & del " + System.Reflection.Assembly.GetEntryAssembly().Location + " & rename launcherUpdate.tmp " + System.AppDomain.CurrentDomain.FriendlyName + "& START " + System.Reflection.Assembly.GetEntryAssembly().Location;
-				p.WindowStyle = ProcessWindowStyle.Hidden;
-				p.CreateNoWindow = true;
-				p.FileName = "cmd.exe";
+				p.Arguments = "/u " + System.AppDomain.CurrentDomain.FriendlyName;
+				p.FileName = "launcherUpdate.exe";
 				Process.Start(p);
 				System.Environment.Exit(0);
 			}

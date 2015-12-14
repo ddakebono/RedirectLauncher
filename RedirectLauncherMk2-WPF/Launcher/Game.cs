@@ -21,7 +21,7 @@ using System.Windows.Markup;
 
 namespace RedirectLauncherMk2_WPF
 {
-	class Game
+	public class Game
 	{
 		//Client data
 		public int clientVersion;
@@ -42,11 +42,15 @@ namespace RedirectLauncherMk2_WPF
 		public String launcherName;
 		public String launcherWebpage;
 		public bool offlineMode;
+		public String customLoginServer;
 		//Extra data
 		public int code = 1622;
+		public bool launchCrackShield = true;
+		public bool launchDevTools = false;
 		public String crackShield = "HSLaunch.exe";
 		public String devtools = "Morrighan.exe";
 		const String gameBinary = "client.exe";
+		public Server selectedServer;
 
 
 		public Game()
@@ -78,17 +82,19 @@ namespace RedirectLauncherMk2_WPF
 		{
 			Directory.SetCurrentDirectory(clientDirectory);
 			String launchArgs = "code:" + code + " ver:" + clientVersion + " logip:" + loginIp + " logport:" + loginPort + " " + args;
-			if (File.Exists(clientDirectory + "\\" + crackShield) && Process.GetProcessesByName(crackShield).Length == 0)
+			//Launch hackshield bypass
+			if (File.Exists(clientDirectory + "\\" + crackShield) && launchCrackShield && Process.GetProcessesByName(crackShield).Length == 0)
 			{
 				ProcessStartInfo crackShieldStart = new ProcessStartInfo();
 				crackShieldStart.FileName = clientDirectory + "\\" + crackShield;
 				Process.Start(crackShieldStart);
 			}
+			//Launch game binary or dev tool
 			if (File.Exists(clientDirectory + "\\" + gameBinary) && Process.GetProcessesByName(gameBinary).Length == 0)
 			{
 				ProcessStartInfo mabiLaunch = new ProcessStartInfo();
 				mabiLaunch.Arguments = launchArgs;
-				if (File.Exists(clientDirectory + "\\" + devtools))
+				if (File.Exists(clientDirectory + "\\" + devtools) && launchDevTools)
 				{
 					mabiLaunch.FileName = clientDirectory + "\\" + devtools;
 				}
@@ -294,13 +300,17 @@ namespace RedirectLauncherMk2_WPF
 			}
 			catch (KeyNotFoundException e)
 			{
-				launcherWebpage = "about:blank";
+				if (selectedServer != null && selectedServer.launcherPage != null)
+					launcherWebpage = selectedServer.launcherPage;
+				else
+					launcherWebpage = "about:blank";
 			}
 		}
 
-		public void loadNewPatchUrl(String patchUrl)
+		public void loadNewPatchUrl(Server server)
 		{
-			Dictionary<String, String> data = patchData(patchUrl);
+			selectedServer = server;
+			Dictionary<String, String> data = patchData(server.patchdata);
 			handlePatchData(data);
 		}
 

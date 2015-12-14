@@ -1,11 +1,4 @@
-﻿//
-// Server list for the Redirect Launcher
-// Values: name, patchdata, [launcherPage]
-//
-//
-
-
-[
-    { name: "Redirect Aura", patchdata: "http://aurares.potato.moe/patchdata.txt" },
-    { name: "Nexon NA", patchdata: "http://mabipatchinfo.nexon.net/patch/patch.txt", launcherPage: "http://mabinogi.nexon.net/launcher"}
+﻿[
+    { "name": "Redirect Aura", "patchdata": "http://aurares.potato.moe/patchdata.txt" },
+	{ "name": "Nexon NA", "patchdata": "http://mabipatchinfo.nexon.net/patch/patch.txt", "launcherPage": "http://mabinogi.nexon.net/launcher", "resHeight": 379, "resWidth": 714}
 ]

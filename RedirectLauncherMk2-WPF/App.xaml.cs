@@ -12,6 +12,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using MetroRadiance;
+using System.IO;
+using System.Reflection;
 
 namespace RedirectLauncherMk2_WPF
 {
@@ -20,10 +22,33 @@ namespace RedirectLauncherMk2_WPF
 	/// </summary>
 	public partial class App : Application
 	{
-		protected void OnStartup(StartupEventArgs e)
+		private void Application_Startup(object sender, StartupEventArgs e)
 		{
-			base.OnStartup(e);
 			ThemeService.Current.Initialize(this, Theme.Dark, Accent.Purple);
+
+			FileInfo f = new FileInfo("launcherUpdate.exe");
+
+			if (f != null && !System.AppDomain.CurrentDomain.FriendlyName.Equals("launcherUpdate.exe"))
+				f.Delete();
+
+			if (e.Args.Length > 0)
+			{
+				for (int i = 0; i < e.Args.Length; i++ )
+				{
+					if (e.Args[i].Equals("/u") && System.AppDomain.CurrentDomain.FriendlyName.Equals("launcherUpdate.exe"))
+					{
+						f.CopyTo(e.Args[i + 1]);
+					}
+				}
+			}
+
+			//Extract Servers.json if nonexistant
+			if (!File.Exists("Servers.json"))
+			{
+				File.WriteAllBytes("Servers.json", RedirectLauncherMk2_WPF.Properties.Resources.Servers);
+			}
+			var main = new MainWindow();
+			main.Show();
 		}
 	}
 }

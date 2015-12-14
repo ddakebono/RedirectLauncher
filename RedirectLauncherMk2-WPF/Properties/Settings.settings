@@ -3,10 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="Version" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">20</Value>
-    </Setting>
-    <Setting Name="DefaultPatchdata" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://aurares.potato.moe/patchdata.txt</Value>
+      <Value Profile="(Default)">21</Value>
     </Setting>
   </Settings>
 </SettingsFile>

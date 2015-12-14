@@ -5,7 +5,7 @@
         xmlns:chrome="http://schemes.grabacr.net/winfx/2014/chrome"
         Background="{DynamicResource ThemeBrushKey}"
 		Foreground="{DynamicResource ActiveForegroundBrushKey}"
-        Title="Options" Height="400" Width="300" UseLayoutRounding="True" ResizeMode="NoResize">
+        Title="Options" Height="400" Width="300" UseLayoutRounding="True" ResizeMode="NoResize" Loaded="WindowIsLoaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -50,8 +50,8 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="Apply" Content="Apply" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom" Grid.Column="0" Click="Apply"/>
-            <Button x:Name="Cancel" Content="Cancel" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom" Grid.Column="1" Click="Cancel"/>
+            <Button x:Name="Apply" Content="Apply" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom" Grid.Column="0" Click="ApplyClick"/>
+            <Button x:Name="Cancel" Content="Cancel" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom" Grid.Column="1" Click="CancelClick"/>
         </Grid>
     </Grid>
 </metro:MetroWindow>

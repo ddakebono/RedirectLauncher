@@ -26,6 +26,7 @@ namespace RedirectLauncherMk2_WPF
 		public bool hasUserSkippedUpdate = false;
 		private TextBlock statusBlock;
 		private TextBlock statusPercentBlock;
+		private string serverModpack;
 
 		public ModUpdater(Game client)
 		{
@@ -39,14 +40,15 @@ namespace RedirectLauncherMk2_WPF
 			this.progressBar = progressBar;
 			this.clientVersionBlock = clientVersionBlock;
 			isUpdateInProgress = true;
-			if ((client.clientModVersion < client.remoteClientModVersion || !doesModpackFileExist()) && !client.offlineMode)
+			serverModpack = client.selectedServer.name.Replace(" ", "_");
+			if ((client.clientModVersion < client.remoteClientModVersion || !doesModpackFileExist(client.clientModVersion)) && !client.offlineMode)
 			{
 				if (MessageBox.Show("It appears your client's mod package file is outdated or missing.\nWould you like to download the latest?", "Update", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
 				{
 					statusBlock.Text = "Updating modpack to version " + client.remoteClientModVersion;
-					if (doesModpackFileExist())
-						File.Delete(client.clientDirectory + "\\package\\zzzRedirectModpack-" + client.clientModVersion.ToString() + ".pack");
-					downloadFileFromWeb("package/modpack-" + client.remoteClientModVersion, client.clientDirectory + "\\package\\zzzRedirectModpack-" + client.remoteClientModVersion + ".pack", client.launcherModRepo);
+					if (doesModpackFileExist(client.clientModVersion))
+						File.Delete(client.clientDirectory + "\\package\\zzz" + serverModpack + "-" + client.clientModVersion.ToString() + ".pack");
+					downloadFileFromWeb("package/modpack-" + client.remoteClientModVersion, client.clientDirectory + "\\package\\zzz" + serverModpack + "-" + client.remoteClientModVersion + ".pack", client.launcherModRepo);
 					return false;
 				}
 				else
@@ -64,9 +66,9 @@ namespace RedirectLauncherMk2_WPF
 			return true;
 		}
 
-		public bool doesModpackFileExist()
+		public bool doesModpackFileExist(int modVersion)
 		{
-			return File.Exists(client.clientDirectory + "\\package\\zzzRedirectModpack-" + client.clientModVersion.ToString() + ".pack");
+			return File.Exists(client.clientDirectory + "\\package\\zzz" + serverModpack + "-" + modVersion.ToString() + ".pack"); ;
 		}
 
 		private void downloadFileFromWeb(String pathToFile, String pathToSave, String host)
