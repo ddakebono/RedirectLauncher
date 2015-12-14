@@ -63,8 +63,8 @@ namespace RedirectLauncherMk2_WPF
 			if (f.Length > 0)
 			{
 				ProcessStartInfo p = new ProcessStartInfo();
-				p.Arguments = "/u " + System.AppDomain.CurrentDomain.FriendlyName;
-				p.FileName = "launcherUpdate.exe";
+				p.Arguments = "/u \"" + System.AppDomain.CurrentDomain.FriendlyName + "\"";
+				p.FileName = System.Environment.CurrentDirectory + "\\launcherUpdate.exe";
 				Process.Start(p);
 				System.Environment.Exit(0);
 			}

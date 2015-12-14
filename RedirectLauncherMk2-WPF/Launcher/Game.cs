@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,6 +27,9 @@ namespace RedirectLauncherMk2_WPF
 		public int clientVersion;
 		public int clientModVersion;
 		public String clientDirectory;
+		public DirectoryInfo modpackDirectory;
+		public DirectoryInfo packDirectory;
+
 		//Server data
 		public int remoteClientVersion;
 		public int remoteLauncherVersion;
@@ -66,19 +70,32 @@ namespace RedirectLauncherMk2_WPF
 				clientVersion = 0;
 				writeVersionData(clientVersion, null);
 			}
-			if (File.Exists(clientDirectory + "\\modVersion.dat"))
-			{
-				clientModVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\modVersion.dat"), 0);
-			}
-			else
-			{
-				clientModVersion = 0;
-			}
+
+			modpackDirectory = new DirectoryInfo(clientDirectory + "\\modpacks");
+			packDirectory = new DirectoryInfo(clientDirectory + "\\package");
+			if (!packDirectory.Exists)
+				packDirectory.Create();
+			if (!modpackDirectory.Exists)
+				modpackDirectory.Create();
+
+			FileInfo[] modpacks = packDirectory.GetFiles("zzz*");
+			foreach (var file in modpacks)
+				file.MoveTo(modpackDirectory.FullName + "\\" + file.Name);
+
+			clientModVersion = 0;
+
 			handlePatchData(new Dictionary<String, String>());
 		}
 
 		public void LaunchGame()
 		{
+			//Move server modpack into package directory
+			FileInfo pack = getCurrentModpack();
+			if (pack != null)
+			{
+				pack.MoveTo(packDirectory.FullName + "\\" + pack.Name);
+			}
+
 			Directory.SetCurrentDirectory(clientDirectory);
 			String launchArgs = "code:" + code + " ver:" + clientVersion + " logip:" + loginIp + " logport:" + loginPort + " " + args;
 			//Launch hackshield bypass
@@ -188,11 +205,40 @@ namespace RedirectLauncherMk2_WPF
 				clientVersionBlock.Text = getLocalClientVersionString();
 			}
 		}
-		public void writeModVersionData(int newVersion, TextBlock clientVersionBlock)
+
+		public void writeModVersionData(int version, TextBlock clientVersionBlock)
 		{
-			File.WriteAllBytes(clientDirectory + "\\modVersion.dat", BitConverter.GetBytes(newVersion));
-			clientModVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\modVersion.dat"), 0);
+			clientModVersion = version;
 			clientVersionBlock.Text = getLocalClientVersionString();
+		}
+
+		public int tryGetModpackVersion(string path, string server)
+		{
+			int version = 0;
+			DirectoryInfo dir = new DirectoryInfo(path);
+			FileInfo[] matchedPacks = dir.GetFiles("zzz" + server + "*");
+			Regex pattern = new Regex("zzz" + server + "-(\\d+).*");
+			foreach (var file in matchedPacks)
+			{
+				Match matches = pattern.Match(file.Name);
+				if (matches.Groups.Count == 2)
+				{
+					int regexVersion = int.Parse(matches.Groups[1].Value);
+					if (regexVersion > version)
+						version = regexVersion;
+				}
+			}
+			return version;
+		}
+
+		public FileInfo getCurrentModpack()
+		{
+			FileInfo[] pack = modpackDirectory.GetFiles("zzz" + selectedServer.name.Replace(' ', '_') + "-" + tryGetModpackVersion(modpackDirectory.FullName, selectedServer.name.Replace(' ', '_')) + ".pack");
+			if (pack.Length == 1)
+			{
+				return pack[0];
+			}
+			return null;
 		}
 
 		public void handlePatchData(Dictionary<String, String> patchdata)
@@ -309,6 +355,7 @@ namespace RedirectLauncherMk2_WPF
 		public void loadNewPatchUrl(Server server)
 		{
 			selectedServer = server;
+			clientModVersion = tryGetModpackVersion(modpackDirectory.FullName, selectedServer.name.Replace(' ', '_'));
 			Dictionary<String, String> data = patchData(server.patchdata);
 			handlePatchData(data);
 		}

@@ -46,7 +46,6 @@ namespace RedirectLauncherMk2_WPF
 
 		private void windowIsReady(object sender, EventArgs e)
 		{
-
 			client.loadNewPatchUrl(serverList.First());
 			reloadElements();
 			updater = new SelfUpdater(client.launcherRepo, Properties.Settings.Default.Version, client.remoteLauncherVersion);

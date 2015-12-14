@@ -14,6 +14,7 @@ using System.Windows;
 using MetroRadiance;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace RedirectLauncherMk2_WPF
 {
@@ -37,7 +38,12 @@ namespace RedirectLauncherMk2_WPF
 				{
 					if (e.Args[i].Equals("/u") && System.AppDomain.CurrentDomain.FriendlyName.Equals("launcherUpdate.exe"))
 					{
-						f.CopyTo(e.Args[i + 1]);
+						foreach (var process in Process.GetProcessesByName(e.Args[i+1].Replace(".exe","")))
+						{
+							Console.WriteLine("WAITING FOR CLOSE");
+							process.WaitForExit();
+						}
+						f.CopyTo(e.Args[i + 1], true);
 					}
 				}
 			}

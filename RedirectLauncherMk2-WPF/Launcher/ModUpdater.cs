@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +28,7 @@ namespace RedirectLauncherMk2_WPF
 		private TextBlock statusBlock;
 		private TextBlock statusPercentBlock;
 		private string serverModpack;
+
 
 		public ModUpdater(Game client)
 		{
@@ -47,8 +49,8 @@ namespace RedirectLauncherMk2_WPF
 				{
 					statusBlock.Text = "Updating modpack to version " + client.remoteClientModVersion;
 					if (doesModpackFileExist(client.clientModVersion))
-						File.Delete(client.clientDirectory + "\\package\\zzz" + serverModpack + "-" + client.clientModVersion.ToString() + ".pack");
-					downloadFileFromWeb("package/modpack-" + client.remoteClientModVersion, client.clientDirectory + "\\package\\zzz" + serverModpack + "-" + client.remoteClientModVersion + ".pack", client.launcherModRepo);
+						File.Delete(client.clientDirectory + "\\modpacks\\zzz" + serverModpack + "-" + client.clientModVersion.ToString() + ".pack");
+					downloadFileFromWeb("package/modpack-" + client.remoteClientModVersion, client.clientDirectory + "\\modpacks\\zzz" + serverModpack + "-" + client.remoteClientModVersion + ".pack", client.launcherModRepo);
 					return false;
 				}
 				else
@@ -68,7 +70,7 @@ namespace RedirectLauncherMk2_WPF
 
 		public bool doesModpackFileExist(int modVersion)
 		{
-			return File.Exists(client.clientDirectory + "\\package\\zzz" + serverModpack + "-" + modVersion.ToString() + ".pack"); ;
+			return File.Exists(client.clientDirectory + "\\modpacks\\zzz" + serverModpack + "-" + modVersion.ToString() + ".pack"); ;
 		}
 
 		private void downloadFileFromWeb(String pathToFile, String pathToSave, String host)
@@ -86,7 +88,7 @@ namespace RedirectLauncherMk2_WPF
 		}
 		private void downloadComplete(object sender, AsyncCompletedEventArgs e)
 		{
-			client.writeModVersionData(client.remoteClientModVersion, clientVersionBlock);
+			client.writeModVersionData(client.tryGetModpackVersion(client.packDirectory.FullName, serverModpack), clientVersionBlock);
 			isUpdateInProgress = false;
 			MessageBox.Show("Download of the latest mod package is done!\nYou may now launch the client.");
 			statusBlock.Text = "Ready to launch!";
