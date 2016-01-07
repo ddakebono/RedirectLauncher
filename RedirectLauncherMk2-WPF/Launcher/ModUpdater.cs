@@ -43,7 +43,7 @@ namespace RedirectLauncherMk2_WPF
 			this.clientVersionBlock = clientVersionBlock;
 			isUpdateInProgress = true;
 			serverModpack = client.selectedServer.name.Replace(" ", "_");
-			if ((client.clientModVersion < client.remoteClientModVersion || !doesModpackFileExist(client.clientModVersion)) && !client.offlineMode)
+			if (client.remoteClientModVersion > 0 && ((client.clientModVersion < client.remoteClientModVersion || !doesModpackFileExist(client.clientModVersion)) && !client.offlineMode))
 			{
 				if (MessageBox.Show("It appears your client's mod package file is outdated or missing.\nWould you like to download the latest?", "Update", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
 				{

@@ -192,7 +192,6 @@ namespace RedirectLauncherMk2_WPF
 				{
 					statusBlock.Text = "Installing updates";
 					moveExtractedDataToClient();
-					client.writeVersionData(midVersion, clientVersionBlock);
 				}
 				else
 				{
@@ -208,18 +207,20 @@ namespace RedirectLauncherMk2_WPF
 				MessageBox.Show("The patch install operation was canceled!");
 				statusBlock.Text = "Update Interrupted";
 				statusPercentBlock.Text = "";
+				isUpdateInProgress = false;
 			}
 			else if (!(e.Error == null))
 			{
 				MessageBox.Show("The background worker operation moving the patch data has encountered an error, please retry the patch!");
 				statusBlock.Text = "Update Failed!";
 				statusPercentBlock.Text = "";
-				throw e.Error;
+				isUpdateInProgress = false;
 			}
 			else
 			{
 				updateDirectory.Delete(true);
 				isUpdateInProgress = false;
+				client.writeVersionData(midVersion, clientVersionBlock);
 				if (midVersion == client.remoteClientVersion)
 				{
 					MessageBox.Show("The patch has been completed successfully, you may now launch the client!");
