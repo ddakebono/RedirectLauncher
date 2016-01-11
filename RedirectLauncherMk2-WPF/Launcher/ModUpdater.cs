@@ -70,7 +70,10 @@ namespace RedirectLauncherMk2_WPF
 
 		public bool doesModpackFileExist(int modVersion)
 		{
-			return File.Exists(client.clientDirectory + "\\modpacks\\zzz" + serverModpack + "-" + modVersion.ToString() + ".pack"); ;
+			if(modVersion > 0)
+				return File.Exists(client.clientDirectory + "\\modpacks\\zzz" + serverModpack + "-" + modVersion.ToString() + ".pack");
+			else
+				return true;
 		}
 
 		private void downloadFileFromWeb(String pathToFile, String pathToSave, String host)
