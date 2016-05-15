@@ -15,6 +15,7 @@ using MetroRadiance;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace RedirectLauncherMk2_WPF
 {
@@ -28,6 +29,16 @@ namespace RedirectLauncherMk2_WPF
 			ThemeService.Current.Initialize(this, Theme.Dark, Accent.Purple);
 
 			FileInfo f = new FileInfo("launcherUpdate.exe");
+
+			RegistryKey ieFeatureBrowserEmu = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION", true);
+			object launcherBrowserVersion = ieFeatureBrowserEmu.GetValue(System.AppDomain.CurrentDomain.FriendlyName);
+			object clientBrowserVersion = ieFeatureBrowserEmu.GetValue("Client.exe");
+			if (launcherBrowserVersion == null || clientBrowserVersion == null)
+			{
+				//Setup registry keys for IE9 usage
+				ieFeatureBrowserEmu.SetValue(System.AppDomain.CurrentDomain.FriendlyName, 9999);
+				ieFeatureBrowserEmu.SetValue("Client.exe", 9999);
+			}
 
 			if (f != null && !System.AppDomain.CurrentDomain.FriendlyName.Equals("launcherUpdate.exe"))
 				f.Delete();
