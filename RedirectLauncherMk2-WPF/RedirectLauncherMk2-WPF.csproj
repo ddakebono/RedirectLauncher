@@ -111,7 +111,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Launcher\Server.cs" />
+    <Compile Include="LauncherLogic\Server.cs" />
     <Page Include="Frames\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -127,13 +127,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Launcher\ClientUpdater.cs" />
-    <Compile Include="Launcher\ModUpdater.cs" />
+    <Compile Include="Updater\ClientUpdater.cs" />
+    <Compile Include="LauncherLogic\ModUpdater.cs" />
     <Compile Include="Frames\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\SelfUpdater.cs" />
-    <Compile Include="Launcher\Game.cs" />
+    <Compile Include="LauncherLogic\SelfUpdater.cs" />
+    <Compile Include="LauncherLogic\Game.cs" />
     <Compile Include="Frames\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -222,6 +222,7 @@
       <Name>MetroRadiance</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.1.26.1\build\Fody.targets" Condition="Exists('..\packages\Fody.1.26.1\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

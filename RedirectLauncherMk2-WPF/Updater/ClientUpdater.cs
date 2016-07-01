@@ -164,9 +164,6 @@ namespace RedirectLauncherMk2_WPF
 					//Download complete merge and install
 					statusBlock.Text = "Merging update parts";
 					mergeUpdateParts();
-					statusBlock.Text = "Extracting update files to temp directory";
-					ExtractFile(updateDirectory.FullName + "\\update.zip", updateExtractDirectory.FullName);
-					ExtractFile(updateDirectory.FullName + "\\language.zip", updateExtractDirectory.FullName + "\\package\\");
 				}
 				else
 				{
@@ -253,13 +250,31 @@ namespace RedirectLauncherMk2_WPF
 
 		private void mergeUpdateParts()
 		{
-			FileInfo output = new FileInfo(updateDirectory.FullName + "\\update.zip");
-			FileStream outputStream = output.OpenWrite();
-			for (int i = 0; i < updateParts; i++)
+			BackgroundWorker merger = new BackgroundWorker();
+			merger.WorkerReportsProgress = true;
+			merger.RunWorkerCompleted += (o, e) =>
 			{
-				CopyStream(outputStream, File.OpenRead(updateDirectory.FullName + "\\" + localToRemote + "." + i.ToString("000")));
-			}
-			outputStream.Close();
+				statusBlock.Text = "Extracting update files to temp directory";
+				ExtractFile(updateDirectory.FullName + "\\update.zip", updateExtractDirectory.FullName);
+				ExtractFile(updateDirectory.FullName + "\\language.zip", updateExtractDirectory.FullName + "\\package\\");
+			};
+			merger.ProgressChanged += (o, e) =>
+			{
+				progressBar.Value = e.ProgressPercentage;
+				statusPercentBlock.Text = "(" + e.ProgressPercentage.ToString() + "%)";
+			};
+			merger.DoWork += (o, e) =>
+			{
+				FileInfo output = new FileInfo(updateDirectory.FullName + "\\update.zip");
+				FileStream outputStream = output.OpenWrite();
+				for (int i = 0; i < updateParts; i++)
+				{
+					CopyStream(outputStream, File.OpenRead(updateDirectory.FullName + "\\" + localToRemote + "." + i.ToString("000")));
+					merger.ReportProgress((i / updateParts) * 100);
+				}
+				outputStream.Close();
+			};
+			merger.RunWorkerAsync();
 		}
 
 		void CopyStream(Stream destination, Stream source)
@@ -275,11 +290,7 @@ namespace RedirectLauncherMk2_WPF
 			BackgroundWorker worker = new BackgroundWorker();
 			worker.WorkerReportsProgress = true;
 			worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(updateCompleted);
-			worker.ProgressChanged += (o, e) =>
-			{
-				progressBar.Value = e.ProgressPercentage;
-				statusPercentBlock.Text = "(" + e.ProgressPercentage.ToString() + "%)";
-			};
+			worker.ProgressChanged += new ProgressChangedEventHandler(progressUpdate);
 			worker.DoWork += (o, e) =>
 			{
 				int fileTransferred = 0;
@@ -303,11 +314,7 @@ namespace RedirectLauncherMk2_WPF
 			BackgroundWorker worker = new BackgroundWorker();
 			worker.WorkerReportsProgress = true;
 			worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(finishUpdate);
-			worker.ProgressChanged += (o, e) =>
-			{
-				progressBar.Value = e.ProgressPercentage;
-				statusPercentBlock.Text = "(" + e.ProgressPercentage.ToString() + "%)";
-			};
+			worker.ProgressChanged += new ProgressChangedEventHandler(progressUpdate);
 			worker.DoWork += (o, e) =>
 			{
 				using (ZipFile zip = ZipFile.Read(zipToUnpack))
@@ -333,8 +340,8 @@ namespace RedirectLauncherMk2_WPF
 			w.DownloadProgressChanged += new DownloadProgressChangedEventHandler(progressUpdate);
 			w.DownloadFileAsync(new Uri(host + "/" + pathToFile), pathToSave);
 		}
-		//Download async functions
-		private void progressUpdate(object sender, DownloadProgressChangedEventArgs e)
+
+		private void progressUpdate(object sender, ProgressChangedEventArgs e)
 		{
 			progressBar.Value = e.ProgressPercentage;
 			statusPercentBlock.Text = "(" + e.ProgressPercentage.ToString() + "%)";

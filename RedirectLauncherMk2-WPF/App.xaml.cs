@@ -22,23 +22,16 @@ namespace RedirectLauncherMk2_WPF
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
+	
 	public partial class App : Application
 	{
+		public MainWindow main;
+
 		private void Application_Startup(object sender, StartupEventArgs e)
 		{
 			ThemeService.Current.Initialize(this, Theme.Dark, Accent.Purple);
 
 			FileInfo f = new FileInfo("launcherUpdate.exe");
-
-			RegistryKey ieFeatureBrowserEmu = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION", true);
-			object launcherBrowserVersion = ieFeatureBrowserEmu.GetValue(System.AppDomain.CurrentDomain.FriendlyName);
-			object clientBrowserVersion = ieFeatureBrowserEmu.GetValue("Client.exe");
-			if (launcherBrowserVersion == null || clientBrowserVersion == null)
-			{
-				//Setup registry keys for IE9 usage
-				ieFeatureBrowserEmu.SetValue(System.AppDomain.CurrentDomain.FriendlyName, 9999);
-				ieFeatureBrowserEmu.SetValue("Client.exe", 9999);
-			}
 
 			if (f != null && !System.AppDomain.CurrentDomain.FriendlyName.Equals("launcherUpdate.exe"))
 				f.Delete();
@@ -64,7 +57,7 @@ namespace RedirectLauncherMk2_WPF
 			{
 				File.WriteAllBytes("Servers.json", RedirectLauncherMk2_WPF.Properties.Resources.Servers);
 			}
-			var main = new MainWindow();
+			main = new MainWindow();
 			main.Show();
 		}
 	}

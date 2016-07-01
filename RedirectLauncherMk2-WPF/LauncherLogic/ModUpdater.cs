@@ -93,8 +93,8 @@ namespace RedirectLauncherMk2_WPF
 		{
 			client.writeModVersionData(client.tryGetModpackVersion(client.packDirectory.FullName, serverModpack), clientVersionBlock);
 			isUpdateInProgress = false;
-			MessageBox.Show("Download of the latest mod package is done!\nYou may now launch the client.");
-			statusBlock.Text = "Ready to launch!";
+			MessageBox.Show("Download of the latest modpack is now done!");
+			statusBlock.Text = "Modpack updated!";
 			statusPercentBlock.Text = "";
 		}
 
