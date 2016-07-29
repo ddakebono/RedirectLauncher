@@ -6,6 +6,7 @@
 */
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RedirectLauncherMk2_WPF.LauncherLogic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,7 +32,8 @@ namespace RedirectLauncherMk2_WPF
 	/// </summary>
 	public partial class MainWindow
 	{
-		public Game client = new Game();
+		public LauncherSettings settings;
+		public Game client;
 		private ClientUpdater clientUpdater;
 		private ModUpdater modUpdater;
 		private SelfUpdater updater;
@@ -40,13 +42,15 @@ namespace RedirectLauncherMk2_WPF
 
 		public MainWindow()
 		{
+			settings = new LauncherSettings();
+			client = new Game(settings);
 			serverList = loadServerList();
 			InitializeComponent();
 		}
 
 		private void windowIsReady(object sender, EventArgs e)
 		{
-			client.loadNewPatchUrl(serverList.First());
+			client.loadNewPatchUrl(serverList[settings.selectedServer]);
 			reloadElements();
 			updater = new SelfUpdater(client.launcherRepo, Properties.Settings.Default.Version, client.remoteLauncherVersion);
 			updater.checkLauncherUpdates(ProgressBar, StatusBlock);
@@ -91,6 +95,7 @@ namespace RedirectLauncherMk2_WPF
 
 		private void LaunchGame(object sender, RoutedEventArgs e)
 		{
+			settings.saveToRegistry();
 			clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
 			modUpdater.startModUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
 			if (client.clientVersion >= client.remoteClientVersion && ((client.clientModVersion >= client.remoteClientModVersion && modUpdater.doesModpackFileExist(client.clientModVersion) && !modUpdater.isUpdateInProgress) || (modUpdater.hasUserSkippedUpdate)) && !clientUpdater.isUpdateInProgress)
@@ -120,6 +125,14 @@ namespace RedirectLauncherMk2_WPF
 		{
 			Options options = new Options(client, serverList);
 			options.ShowDialog();
+			if (options.clientDirChanged)
+			{
+				client = new Game(settings);
+			}
+			if (options.selectedServerChanged || options.clientDirChanged)
+			{
+				client.loadNewPatchUrl(serverList[settings.selectedServer]);
+			}
 			reloadElements();
 		}
 	}

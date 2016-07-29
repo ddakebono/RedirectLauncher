@@ -295,11 +295,11 @@ namespace RedirectLauncherMk2_WPF
 			{
 				int fileTransferred = 0;
 				foreach (DirectoryInfo dir in updateExtractDirectory.GetDirectories("*", SearchOption.AllDirectories))
-					Directory.CreateDirectory(dir.FullName.Replace(updateExtractDirectory.FullName, client.clientDirectory + "\\"));
+					Directory.CreateDirectory(dir.FullName.Replace(updateExtractDirectory.FullName, client.settings.clientInstallDirectory + "\\"));
 				FileInfo[] files = updateExtractDirectory.GetFiles("*", SearchOption.AllDirectories);
 				foreach (FileInfo file in files)
 				{
-					file.CopyTo(Path.Combine(client.clientDirectory, file.FullName.Replace(updateExtractDirectory.FullName + "\\", "")), true);
+					file.CopyTo(Path.Combine(client.settings.clientInstallDirectory, file.FullName.Replace(updateExtractDirectory.FullName + "\\", "")), true);
 					fileTransferred++;
 					worker.ReportProgress((fileTransferred / files.Length) * 100);
 					file.Delete();

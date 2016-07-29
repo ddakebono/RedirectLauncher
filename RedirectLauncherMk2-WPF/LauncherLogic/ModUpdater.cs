@@ -49,8 +49,8 @@ namespace RedirectLauncherMk2_WPF
 				{
 					statusBlock.Text = "Updating modpack to version " + client.remoteClientModVersion;
 					if (doesModpackFileExist(client.clientModVersion))
-						File.Delete(client.clientDirectory + "\\modpacks\\zzz" + serverModpack + "-" + client.clientModVersion.ToString() + ".pack");
-					downloadFileFromWeb("package/modpack-" + client.remoteClientModVersion, client.clientDirectory + "\\modpacks\\zzz" + serverModpack + "-" + client.remoteClientModVersion + ".pack", client.launcherModRepo);
+						File.Delete(client.settings.clientInstallDirectory + "\\modpacks\\zzz" + serverModpack + "-" + client.clientModVersion.ToString() + ".pack");
+					downloadFileFromWeb("package/modpack-" + client.remoteClientModVersion, client.settings.clientInstallDirectory + "\\modpacks\\zzz" + serverModpack + "-" + client.remoteClientModVersion + ".pack", client.launcherModRepo);
 					return false;
 				}
 				else
@@ -71,7 +71,7 @@ namespace RedirectLauncherMk2_WPF
 		public bool doesModpackFileExist(int modVersion)
 		{
 			if(modVersion > 0)
-				return File.Exists(client.clientDirectory + "\\modpacks\\zzz" + serverModpack + "-" + modVersion.ToString() + ".pack");
+				return File.Exists(client.settings.clientInstallDirectory + "\\modpacks\\zzz" + serverModpack + "-" + modVersion.ToString() + ".pack");
 			else
 				return true;
 		}

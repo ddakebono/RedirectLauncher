@@ -25,7 +25,7 @@ namespace RedirectLauncherMk2_WPF.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        [global::System.Configuration.DefaultSettingValueAttribute("32")]
         public int Version {
             get {
                 return ((int)(this["Version"]));

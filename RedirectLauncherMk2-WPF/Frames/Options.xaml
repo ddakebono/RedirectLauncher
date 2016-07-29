@@ -44,20 +44,26 @@ Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <ComboBox x:Name="ServerList" HorizontalAlignment="Stretch" Grid.Row="0" Margin="10,0,0,0"/>
+            <ComboBox x:Name="ServerList" HorizontalAlignment="Stretch" Grid.Row="0" Margin="10,0,0,0" SelectionChanged="changeServer"/>
             <Label Content="Server Selection" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1"/>
             <TextBox x:Name="CustomLogip" HorizontalAlignment="Stretch" Height="23" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,0,0,0"/>
             <Label Content="Custom Login Address" Grid.Row="2" HorizontalAlignment="Center" Grid.Column="1" Foreground="White"/>
-            <CheckBox x:Name="HShield" Content="Launch HShield" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Top"/>
+            <CheckBox x:Name="Kanan" Content="Launch Kanan" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Top"/>
             <CheckBox x:Name="Proxy" Content="Launch Proxy" HorizontalAlignment="Center" Grid.Row="4" Grid.Column="1" VerticalAlignment="Top"/>
         </Grid>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="3" Margin="0,5,0,-5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button x:Name="Apply" Content="Apply" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom" Grid.Column="0" Click="ApplyClick"/>
             <Button x:Name="Cancel" Content="Cancel" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom" Grid.Column="1" Click="CancelClick"/>
+            <Label Content="Kanan Patcher Directory" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="274" Foreground="White"/>
+            <TextBox x:Name="FolderSelect" HorizontalAlignment="Left" Height="23" Margin="10,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127" IsEnabled="False"/>
+            <Button x:Name="Browse" Content="Browse" Grid.Column="1" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="127" Height="23" Click="OpenFolderBrowser"/>
+            <Label Content="Client Directory" HorizontalAlignment="Left" Margin="10,69,0,0" VerticalAlignment="Top" Width="137" Background="#00000000" Foreground="White"/>
+            <TextBox x:Name="ClientDir" HorizontalAlignment="Left" Height="23" Margin="10,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127" IsEnabled="False"/>
+            <Button x:Name="ClientBrowse" Content="Browse" Grid.Column="1" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="127" Height="23" Click="SelectClientFolder"/>
         </Grid>
     </Grid>
 </metro:MetroWindow>

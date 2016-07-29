@@ -5,6 +5,7 @@
 * Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
 */
 using Microsoft.Win32;
+using RedirectLauncherMk2_WPF.LauncherLogic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,7 +27,6 @@ namespace RedirectLauncherMk2_WPF
 		//Client data
 		public int clientVersion;
 		public int clientModVersion;
-		public String clientDirectory;
 		public DirectoryInfo modpackDirectory;
 		public DirectoryInfo packDirectory;
 
@@ -45,24 +45,22 @@ namespace RedirectLauncherMk2_WPF
 		public String launcherName;
 		public String launcherWebpage;
 		public bool offlineMode;
-		public String customLoginServer;
 		//Extra data
 		public int code = 1622;
-		public bool launchCrackShield = true;
-		public bool launchDevTools = false;
-		public String crackShield = "HSLaunch.exe";
+		public LauncherSettings settings;
 		public String devtools = "Morrighan.exe";
 		const String gameBinary = "client.exe";
 		public Server selectedServer;
 
 
-		public Game()
+		public Game(LauncherSettings settings)
 		{
+			this.settings = settings;
 			//Get local data
-			clientDirectory = locateGameClientDirectory();
-			if (File.Exists(clientDirectory + "\\version.dat"))
+			settings.clientInstallDirectory = locateGameClientDirectory();
+			if (File.Exists(settings.clientInstallDirectory + "\\version.dat"))
 			{
-				clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
+				clientVersion = BitConverter.ToInt32(File.ReadAllBytes(settings.clientInstallDirectory + "\\version.dat"), 0);
 			}
 			else
 			{
@@ -71,8 +69,8 @@ namespace RedirectLauncherMk2_WPF
 				writeVersionData(clientVersion, null);
 			}
 
-			modpackDirectory = new DirectoryInfo(clientDirectory + "\\modpacks");
-			packDirectory = new DirectoryInfo(clientDirectory + "\\package");
+			modpackDirectory = new DirectoryInfo(settings.clientInstallDirectory + "\\modpacks");
+			packDirectory = new DirectoryInfo(settings.clientInstallDirectory + "\\package");
 			if (!packDirectory.Exists)
 				packDirectory.Create();
 			if (!modpackDirectory.Exists)
@@ -96,27 +94,30 @@ namespace RedirectLauncherMk2_WPF
 				pack.MoveTo(packDirectory.FullName + "\\" + pack.Name);
 			}
 
-			Directory.SetCurrentDirectory(clientDirectory);
+			Directory.SetCurrentDirectory(settings.clientInstallDirectory);
 			String launchArgs = "code:" + code + " ver:" + clientVersion + " logip:" + loginIp + " logport:" + loginPort + " " + args;
-			//Launch hackshield bypass
-			if (File.Exists(clientDirectory + "\\" + crackShield) && launchCrackShield && Process.GetProcessesByName(crackShield).Length == 0)
+			//Launch kanan
+			if (File.Exists(settings.kananFolder + "\\kanan.py") && settings.launchKanan)
 			{
-				ProcessStartInfo crackShieldStart = new ProcessStartInfo();
-				crackShieldStart.FileName = clientDirectory + "\\" + crackShield;
-				Process.Start(crackShieldStart);
+				ProcessStartInfo kananLaunch = new ProcessStartInfo();
+				kananLaunch.FileName = "python.exe";
+				kananLaunch.UseShellExecute = false;
+				kananLaunch.WorkingDirectory = settings.kananFolder;
+				kananLaunch.Arguments = "kanan.py";
+				Process.Start(kananLaunch);
 			}
 			//Launch game binary or dev tool
-			if (File.Exists(clientDirectory + "\\" + gameBinary) && Process.GetProcessesByName(gameBinary).Length == 0)
+			if (File.Exists(settings.clientInstallDirectory + "\\" + gameBinary) && Process.GetProcessesByName(gameBinary).Length == 0)
 			{
 				ProcessStartInfo mabiLaunch = new ProcessStartInfo();
 				mabiLaunch.Arguments = launchArgs;
-				if (File.Exists(clientDirectory + "\\" + devtools) && launchDevTools)
+				if (File.Exists(settings.clientInstallDirectory + "\\" + devtools) && settings.launchDevTools)
 				{
-					mabiLaunch.FileName = clientDirectory + "\\" + devtools;
+					mabiLaunch.FileName = settings.clientInstallDirectory + "\\" + devtools;
 				}
 				else
 				{
-					mabiLaunch.FileName = clientDirectory + "\\" + gameBinary;
+					mabiLaunch.FileName = settings.clientInstallDirectory + "\\" + gameBinary;
 				}
 				Process.Start(mabiLaunch);
 				System.Environment.Exit(0);
@@ -136,24 +137,22 @@ namespace RedirectLauncherMk2_WPF
 		{
 			RegistryKey mabinogiRegistry = Registry.CurrentUser.OpenSubKey(@"Software\Nexon\Mabinogi", true);
 			RegistryKey steamRegistry = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam", false);
-			String redirectRegKey = null;
 			String mabiRegDirectory = null;
 			String steamCommon = null;
 			if (mabinogiRegistry == null)
 			{
 				mabinogiRegistry = Registry.CurrentUser.CreateSubKey(@"Software\Nexon\Mabinogi");
 			}
-			redirectRegKey = (String)mabinogiRegistry.GetValue("RDClientRoot");
 			mabiRegDirectory = (String)mabinogiRegistry.GetValue("");
 			if (steamRegistry != null)
 			{
 				steamCommon = (String)steamRegistry.GetValue("SteamPath") + "\\steamapps\\common\\Mabinogi";
 			}
 			String result;
-			if (redirectRegKey != null && File.Exists(redirectRegKey + "\\version.dat"))
+			if (settings.clientInstallDirectory.Length>0 && File.Exists(settings.clientInstallDirectory + "\\version.dat"))
 			{
 				//This will be set once the launcher is run for the first time.
-				result = redirectRegKey;
+				result = settings.clientInstallDirectory;
 			}
 			else
 			{
@@ -192,16 +191,17 @@ namespace RedirectLauncherMk2_WPF
 					}
 				}
 			}
-			mabinogiRegistry.SetValue("RDClientRoot", result, RegistryValueKind.String);
+			settings.clientInstallDirectory = result;
+			settings.saveToRegistry();
 			return result;
 		}
 
 		public void writeVersionData(int newVersion, TextBlock clientVersionBlock)
 		{
-			File.WriteAllBytes(clientDirectory + "\\version.dat", BitConverter.GetBytes(newVersion));
+			File.WriteAllBytes(settings.clientInstallDirectory + "\\version.dat", BitConverter.GetBytes(newVersion));
 			if (clientVersionBlock != null)
 			{
-				clientVersion = BitConverter.ToInt32(File.ReadAllBytes(clientDirectory + "\\version.dat"), 0);
+				clientVersion = BitConverter.ToInt32(File.ReadAllBytes(settings.clientInstallDirectory + "\\version.dat"), 0);
 				clientVersionBlock.Text = getLocalClientVersionString();
 			}
 		}
