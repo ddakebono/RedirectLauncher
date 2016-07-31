@@ -11,8 +11,12 @@ Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
         xmlns:chrome="http://schemes.grabacr.net/winfx/2014/chrome"
         Background="{DynamicResource ThemeBrushKey}"
 		Foreground="{DynamicResource ActiveForegroundBrushKey}"
-        Title="Options" Height="400" Width="300" UseLayoutRounding="True" ResizeMode="NoResize" IsHitTestVisible="True">
-    <Grid IsHitTestVisible="True">
+        Title="About" Height="400" Width="300" UseLayoutRounding="True" ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
         <Border Grid.Row="0" metro:MetroWindow.IsCaptionBar="True" Grid.ColumnSpan="2">
             <Grid Margin="10,0,0,0">
                 <Grid.ColumnDefinitions>
@@ -24,20 +28,12 @@ Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
                 <metro:SystemButtons Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top"/>
             </Grid>
         </Border>
-        <Grid>
-            <TextBlock TextAlignment="Center" HorizontalAlignment="Left" Margin="10,62,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="309" Width="274">
-                Redirect Launcher Version - <Run Text="{Binding Text}"/>
-                <Run Text="&#10;"/><Run Text="&#10;"/>
-                Developed by Owen Bennett (Ripxfrostbite)
-                <Run Text="&#10;"/><Run Text="&#10;"/>
-                This launcher is open source software and is licenced under the MIT licence.
-                <Run Text="&#10;"/><Run Text="&#10;"/>
-                To report issues or to request additions to the launcher please visit the Gitlab over at :
-                <Run Text="&#10;"/>
-                <Run Text="&#10;"/>
-                http://git.potato.moe/potato-san/Redirect-Launcher-mk2/
-                <Run Text="&#10;"/>
-                (I would make it a link but WPF hates me)
+        <Grid Grid.Row="1">
+            <TextBlock TextAlignment="Center" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="150" Width="274" Text="Redirect Launcher Version -  &#xA;&#xA; Developed by Owen Bennett (Ripxfrostbite) &#xA;&#xA; This launcher is open source software and is licenced under the MIT licence. &#xA;&#xA; To report issues or to request additions to the launcher please visit the Github over at : "/>
+            <TextBlock HorizontalAlignment="Left" Margin="10,165,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="274" Height="21" TextAlignment="Center">
+                <Hyperlink NavigateUri="https://github.com/ripxfrostbite/RedirectLauncher" RequestNavigate="OpenGithub">
+                    https://github.com/ripxfrostbite/RedirectLauncher
+                </Hyperlink>
             </TextBlock>
 
         </Grid>

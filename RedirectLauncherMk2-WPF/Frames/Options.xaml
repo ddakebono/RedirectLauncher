@@ -45,11 +45,11 @@ Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <ComboBox x:Name="ServerList" HorizontalAlignment="Stretch" Grid.Row="0" Margin="10,0,0,0" SelectionChanged="changeServer"/>
-            <Label Content="Server Selection" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1"/>
-            <TextBox x:Name="CustomLogip" HorizontalAlignment="Stretch" Height="23" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,0,0,0"/>
-            <Label Content="Custom Login Address" Grid.Row="2" HorizontalAlignment="Center" Grid.Column="1" Foreground="White"/>
+            <Label Content="Server Selection" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1" Margin="29,0,24,0"/>
             <CheckBox x:Name="Kanan" Content="Launch Kanan" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Top"/>
             <CheckBox x:Name="Proxy" Content="Launch Proxy" HorizontalAlignment="Center" Grid.Row="4" Grid.Column="1" VerticalAlignment="Top"/>
+            <Button Content=" Manage Server" HorizontalAlignment="Left" Margin="10,2,0,0" Grid.Row="2" VerticalAlignment="Top" Width="127" Click="OpenManageServer"/>
+            <Button Content="Add Server" Grid.Column="1" HorizontalAlignment="Left" Margin="10,2,0,0" Grid.Row="2" VerticalAlignment="Top" Width="127" Click="OpenAddServer"/>
         </Grid>
         <Grid Grid.Row="3" Margin="0,5,0,-5">
             <Grid.ColumnDefinitions>

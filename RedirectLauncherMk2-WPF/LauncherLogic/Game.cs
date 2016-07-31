@@ -149,7 +149,7 @@ namespace RedirectLauncherMk2_WPF
 				steamCommon = (String)steamRegistry.GetValue("SteamPath") + "\\steamapps\\common\\Mabinogi";
 			}
 			String result;
-			if (settings.clientInstallDirectory.Length>0 && File.Exists(settings.clientInstallDirectory + "\\version.dat"))
+			if (settings.clientInstallDirectory.Length > 0 && File.Exists(settings.clientInstallDirectory + "\\version.dat"))
 			{
 				//This will be set once the launcher is run for the first time.
 				result = settings.clientInstallDirectory;
@@ -356,58 +356,8 @@ namespace RedirectLauncherMk2_WPF
 		{
 			selectedServer = server;
 			clientModVersion = tryGetModpackVersion(modpackDirectory.FullName, selectedServer.name.Replace(' ', '_'));
-			Dictionary<String, String> data = patchData(server.patchdata);
+			Dictionary<String, String> data = selectedServer.patchData(this);
 			handlePatchData(data);
-		}
-
-		private Dictionary<String, String> patchData(String patchUrl)
-		{
-			Dictionary<String, String> result = new Dictionary<string, string>();
-			try
-			{
-				HttpWebRequest initConnection = (HttpWebRequest)WebRequest.Create(patchUrl);
-				HttpWebResponse recievedData = (HttpWebResponse)initConnection.GetResponse();
-				Stream dataStream = recievedData.GetResponseStream();
-				Encoding enc = Encoding.UTF8;
-				StreamReader r = new StreamReader(dataStream, enc);
-				String tempLine;
-				while ((tempLine = r.ReadLine()) != null)
-				{
-					if (tempLine.Trim().Length > 0 && !tempLine[0].Equals("#"))
-					{
-						String[] tempSplit = tempLine.Split(new char[] { '=' }, 2);
-						if (tempSplit.Length == 2)
-						{
-							result.Add(tempSplit[0], tempSplit[1]);
-						}
-					}
-				}
-				recievedData.Close();
-				dataStream.Close();
-			}
-			catch (WebException e)
-			{
-				System.Windows.MessageBox.Show("The launcher cannot connect to the server containing the patch info");
-				offlineMode = true;
-			}
-			//Overrides from the launchers arguments
-			String[] overrideArguments = Environment.GetCommandLineArgs();
-			for (int i = 0; i < overrideArguments.Length; i++)
-			{
-				String[] tempSplit = overrideArguments[i].Trim().Split(new char[] { '=' }, 2);
-				if (tempSplit.Length == 2)
-				{
-					try
-					{
-						result[tempSplit[0]] = tempSplit[1];
-					}
-					catch (KeyNotFoundException e)
-					{
-						result.Add(tempSplit[0], tempSplit[1]);
-					}
-				}
-			}
-			return result;
 		}
 	}
 }

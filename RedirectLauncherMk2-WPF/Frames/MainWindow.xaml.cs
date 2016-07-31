@@ -37,20 +37,20 @@ namespace RedirectLauncherMk2_WPF
 		private ClientUpdater clientUpdater;
 		private ModUpdater modUpdater;
 		private SelfUpdater updater;
-		private List<Server> serverList;
+		public Serverlist serverList;
 		private bool pageHasLoaded = false;
 
 		public MainWindow()
 		{
 			settings = new LauncherSettings();
 			client = new Game(settings);
-			serverList = loadServerList();
+			serverList = new Serverlist();
 			InitializeComponent();
 		}
 
 		private void windowIsReady(object sender, EventArgs e)
 		{
-			client.loadNewPatchUrl(serverList[settings.selectedServer]);
+			client.loadNewPatchUrl((settings.selectedServer < serverList.servers.Count) ? serverList.servers[settings.selectedServer] : serverList.servers.First());
 			reloadElements();
 			updater = new SelfUpdater(client.launcherRepo, Properties.Settings.Default.Version, client.remoteLauncherVersion);
 			updater.checkLauncherUpdates(ProgressBar, StatusBlock);
@@ -58,20 +58,6 @@ namespace RedirectLauncherMk2_WPF
 			modUpdater = new ModUpdater(client);
 			reloadElements();
 			StatusBlock.Text = "Ready to Launch!";
-		}
-
-		private List<Server> loadServerList()
-		{
-			List<Server> serverList = new List<Server>();
-			StreamReader jsonFile = File.OpenText("Servers.json");
-			JsonTextReader reader = new JsonTextReader(jsonFile);
-			JsonSerializer json = new JsonSerializer();
-			var servers = json.Deserialize<JArray>(reader);
-			foreach (var server in servers)
-			{
-				serverList.Add(new Server(server.Value<string>("name"), server.Value<string>("patchdata"), server.Value<string>("launcherPage"), server.Value<int>("resWidth"), server.Value<int>("resHeight")));
-			}
-			return serverList;
 		}
 
 		public void reloadElements()
@@ -89,8 +75,16 @@ namespace RedirectLauncherMk2_WPF
 				WebBlock.Height = client.selectedServer.resHeight;
 			else
 				WebBlock.Height = Double.NaN;
-			WebBlock.Source = new Uri(client.launcherWebpage);
 			TitleBlock.Text = client.launcherName;
+			try
+			{
+				WebBlock.Source = new Uri(client.launcherWebpage);
+			}
+			catch (UriFormatException e)
+			{
+				System.Windows.Forms.MessageBox.Show("The URL given for Launcher Webpage was invalid!");
+				WebBlock.Source = new Uri("about:blank");
+			}
 		}
 
 		private void LaunchGame(object sender, RoutedEventArgs e)
@@ -118,6 +112,7 @@ namespace RedirectLauncherMk2_WPF
 		private void OpenAboutWindow(object sender, RoutedEventArgs e)
 		{
 			About about = new About();
+			serverList.saveToFile();
 			about.ShowDialog();
 		}
 
@@ -131,7 +126,7 @@ namespace RedirectLauncherMk2_WPF
 			}
 			if (options.selectedServerChanged || options.clientDirChanged)
 			{
-				client.loadNewPatchUrl(serverList[settings.selectedServer]);
+				client.loadNewPatchUrl(serverList.servers[settings.selectedServer]);
 			}
 			reloadElements();
 		}

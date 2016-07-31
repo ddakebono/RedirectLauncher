@@ -5,6 +5,7 @@
 * Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
 */
 using MetroRadiance.Controls;
+using RedirectLauncherMk2_WPF.LauncherLogic;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,11 +30,11 @@ namespace RedirectLauncherMk2_WPF
 	public partial class Options : MetroWindow
 	{
 		private Game client;
-		private List<Server> serverList;
+		private Serverlist serverList;
 		public bool clientDirChanged;
 		public bool selectedServerChanged;
 
-		public Options(Game client, List<Server> serverList)
+		public Options(Game client, Serverlist serverList)
 		{
 			this.client = client;
 			this.serverList = serverList;
@@ -46,7 +47,6 @@ namespace RedirectLauncherMk2_WPF
 			client.settings.selectedServer = ServerList.SelectedIndex;
 			client.settings.launchKanan = (bool)Kanan.IsChecked;
 			client.settings.launchDevTools = (bool)Proxy.IsChecked;
-			client.settings.customLoginIP = CustomLogip.Text;
 			client.settings.kananFolder = FolderSelect.Text;
 			client.settings.saveToRegistry();
 			this.Close();
@@ -61,9 +61,9 @@ namespace RedirectLauncherMk2_WPF
 
 		private void WindowIsLoaded(object sender, RoutedEventArgs e)
 		{
-			ServerList.ItemsSource = serverList;
+			ServerList.ItemsSource = serverList.servers;
 			ServerList.DisplayMemberPath = "name";
-			ServerList.SelectedIndex = serverList.FindIndex(x => x.name.Equals(client.selectedServer.name));
+			ServerList.SelectedIndex = serverList.servers.FindIndex(x => x.name.Equals(client.selectedServer.name));
 			Kanan.IsChecked = client.settings.launchKanan;
 			Proxy.IsChecked = client.settings.launchDevTools;
 			FolderSelect.Text = client.settings.kananFolder;
@@ -112,6 +112,27 @@ namespace RedirectLauncherMk2_WPF
 		private void changeServer(object sender, SelectionChangedEventArgs e)
 		{
 			selectedServerChanged = true;
+		}
+
+		private void OpenManageServer(object sender, RoutedEventArgs e)
+		{
+			ServerManager manager = new ServerManager(serverList.servers[ServerList.SelectedIndex]);
+			manager.ShowDialog();
+			selectedServerChanged = true;
+			serverList.saveToFile();
+		}
+
+		private void OpenAddServer(object sender, RoutedEventArgs e)
+		{
+			ServerManager manager = new ServerManager();
+			manager.ShowDialog();
+			if (manager.server != null)
+			{
+				serverList.servers.Add(manager.server);
+				ServerList.ItemsSource = serverList.servers;
+				ServerList.SelectedIndex = serverList.servers.IndexOf(manager.server);
+			}
+			serverList.saveToFile();
 		}
 	}
 }

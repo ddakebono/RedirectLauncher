@@ -34,9 +34,9 @@ namespace RedirectLauncherMk2_WPF
 			
 		}
 
-		private void HyperlinkClik(object sender, RoutedEventArgs e)
+		private void OpenGithub(object sender, RoutedEventArgs e)
 		{
-			Process.Start("http://git.potato.moe/potato-san/Redirect-Launcher-mk2/");
+			Process.Start("https://github.com/ripxfrostbite/RedirectLauncher");
 		}
 
 	}
