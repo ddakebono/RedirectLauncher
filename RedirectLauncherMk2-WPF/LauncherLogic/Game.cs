@@ -297,7 +297,7 @@ namespace RedirectLauncherMk2_WPF
 			}
 			catch (KeyNotFoundException e)
 			{
-				launcherName = "Redirect Gaming Launcher";
+				launcherName = "Redirect Launcher";
 			}
 			try
 			{
