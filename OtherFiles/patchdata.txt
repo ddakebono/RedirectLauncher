@@ -1,0 +1,16 @@
+patch_accept=1
+local_version=232
+local_ftp=mabipatch.nexon.net
+main_version=232
+main_ftp=mabipatch.nexon.net
+launcherinfo=162
+redirectlauncherver=1
+redirectlauncherrepo=http://your.site.here/patchdata/launcher/
+redirectlaunchername=A cool launcher
+redirect_mod_version=1
+redirect_mod_repo=http://your.site.here/patchdata/
+redirect_launcher_webpage=https://your.site.here/launcher
+login=0.0.0.0
+login_port=11000
+arg=chatip:0.0.0.0 chatport:8002 setting:"file://data/features.xml=Regular, USA" resourcesvr:"http://your.site.here/resources/"
+lang=patch_langpack.txt
