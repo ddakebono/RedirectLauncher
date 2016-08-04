@@ -22,11 +22,11 @@ Features
 Usage
 -----
 
-The launcher can be used either standalone or distrbuted by a host with a server preconfigured.  
+The launcher can be used either standalone or distributed by a host with a server preconfigured.  
 If you wish to use the launcher standalone you can simply download and run it, it comes with the NA server preset.  
 Also adding more servers is simple, just enter options and hit add.
 
-If you wish to distrbute preconfigured versions and setup the extra functionality of the launcher please see the wiki.
+If you wish to distribute preconfigured versions and setup the extra functionality of the launcher please see the wiki.
 
 Misc
 ----
@@ -40,7 +40,7 @@ License
 MetroRadiance, MetroRadiance.Core and MetroRadiance.Chrome were created by Grabacr07 (<a href="https://github.com/Grabacr07/MetroRadiance">https://github.com/Grabacr07/MetroRadiance</a>)  
 MetroRadiance is licensed under the MIT License.
 
-The Launcher also relies on DotNetZip, which is licenced under the Microsoft Public Licence.
+The Launcher also relies on DotNetZip, which is licensed under the Microsoft Public Licence.
 
 All of my code in this launcher is licensed under the MIT License  
 <a href="http://opensource.org/licenses/MIT">http://opensource.org/licenses/MIT</a>
