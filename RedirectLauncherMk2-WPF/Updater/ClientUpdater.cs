@@ -43,6 +43,7 @@ namespace RedirectLauncherMk2_WPF
 		private TextBlock statusBlock;
 		private TextBlock statusPercentBlock;
 		private Dictionary<String, String> updatePartHashes = new Dictionary<string, string>();
+		private StreamWriter testlog;
 
 		public ClientUpdater(Game client)
 		{
@@ -188,6 +189,7 @@ namespace RedirectLauncherMk2_WPF
 				if (extractionFinished > 0)
 				{
 					statusBlock.Text = "Installing updates";
+					testlog.Close();
 					moveExtractedDataToClient();
 				}
 				else
@@ -252,29 +254,28 @@ namespace RedirectLauncherMk2_WPF
 		{
 			BackgroundWorker merger = new BackgroundWorker();
 			merger.WorkerReportsProgress = true;
-			merger.RunWorkerCompleted += (o, e) =>
-			{
-				statusBlock.Text = "Extracting update files to temp directory";
-				ExtractFile(updateDirectory.FullName + "\\update.zip", updateExtractDirectory.FullName);
-				ExtractFile(updateDirectory.FullName + "\\language.zip", updateExtractDirectory.FullName + "\\package\\");
-			};
-			merger.ProgressChanged += (o, e) =>
-			{
-				progressBar.Value = e.ProgressPercentage;
-				statusPercentBlock.Text = "(" + e.ProgressPercentage.ToString() + "%)";
-			};
+			merger.RunWorkerCompleted += new RunWorkerCompletedEventHandler(extractUpdateZips);
+			merger.ProgressChanged += new ProgressChangedEventHandler(progressUpdate);
 			merger.DoWork += (o, e) =>
 			{
 				FileInfo output = new FileInfo(updateDirectory.FullName + "\\update.zip");
 				FileStream outputStream = output.OpenWrite();
 				for (int i = 0; i < updateParts; i++)
 				{
-					CopyStream(outputStream, File.OpenRead(updateDirectory.FullName + "\\" + localToRemote + "." + i.ToString("000")));
 					merger.ReportProgress((i / updateParts) * 100);
+					CopyStream(outputStream, File.OpenRead(updateDirectory.FullName + "\\" + localToRemote + "." + i.ToString("000")));
 				}
 				outputStream.Close();
 			};
 			merger.RunWorkerAsync();
+		}
+
+		private void extractUpdateZips(Object sender, RunWorkerCompletedEventArgs e)
+		{
+			testlog = new StreamWriter(File.OpenWrite("testextlog.txt"));
+			statusBlock.Text = "Extracting update files to temp directory";
+			ExtractFile(updateDirectory.FullName + "\\update.zip", updateExtractDirectory.FullName);
+			ExtractFile(updateDirectory.FullName + "\\language.zip", updateExtractDirectory.FullName + "\\package\\");
 		}
 
 		void CopyStream(Stream destination, Stream source)
@@ -319,14 +320,12 @@ namespace RedirectLauncherMk2_WPF
 			{
 				using (ZipFile zip = ZipFile.Read(zipToUnpack))
 				{
-					int step = (zip.Count / 100);
-					int percentComplete = 0;
-					foreach (ZipEntry file in zip)
+					zip.ExtractProgress += (s, ev) =>
 					{
-						file.Extract(unpackDirectory, ExtractExistingFileAction.OverwriteSilently);
-						percentComplete += step;
-						worker.ReportProgress(percentComplete);
-					}
+						if(ev.TotalBytesToTransfer>0)
+							worker.ReportProgress((Int32)((ev.BytesTransferred/ev.TotalBytesToTransfer)*100));
+					};
+					zip.ExtractAll(unpackDirectory, ExtractExistingFileAction.OverwriteSilently);
 				}
 			};
 

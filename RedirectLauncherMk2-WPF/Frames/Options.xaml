@@ -4,11 +4,13 @@ This file is a part of the RedirectLauncher by Owen Bennett.
 All code contained in here is licensed under the MIT license.
 Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
 -->
-<metro:MetroWindow x:Class="RedirectLauncherMk2_WPF.Options"
+<metro:MetroWindow
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:metro="http://schemes.grabacr.net/winfx/2014/controls"
         xmlns:chrome="http://schemes.grabacr.net/winfx/2014/chrome"
+        xmlns:local="clr-namespace:RedirectLauncherMk2_WPF" x:Class="RedirectLauncherMk2_WPF.Options"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Background="{DynamicResource ThemeBrushKey}"
 		Foreground="{DynamicResource ActiveForegroundBrushKey}"
         Title="Options" Height="400" Width="300" UseLayoutRounding="True" ResizeMode="NoResize" Loaded="WindowIsLoaded">
@@ -46,8 +48,8 @@ Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
             </Grid.ColumnDefinitions>
             <ComboBox x:Name="ServerList" HorizontalAlignment="Stretch" Grid.Row="0" Margin="10,0,0,0" SelectionChanged="changeServer"/>
             <Label Content="Server Selection" HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1" Margin="29,0,24,0"/>
-            <CheckBox x:Name="Kanan" Content="Launch Kanan" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Top"/>
-            <CheckBox x:Name="Proxy" Content="Launch Proxy" HorizontalAlignment="Center" Grid.Row="4" Grid.Column="1" VerticalAlignment="Top"/>
+            <CheckBox x:Name="Kanan" Content="Launch Kanan" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Top" ToolTip="Launches the Kanan patcher if you've set the directory below"/>
+            <CheckBox x:Name="Proxy" Content="Launch Proxy" HorizontalAlignment="Center" Grid.Row="4" Grid.Column="1" VerticalAlignment="Top" ToolTip="Launches Morrighan.exe if it's found in your client directory"/>
             <Button Content=" Manage Server" HorizontalAlignment="Left" Margin="10,2,0,0" Grid.Row="2" VerticalAlignment="Top" Width="127" Click="OpenManageServer"/>
             <Button Content="Add Server" Grid.Column="1" HorizontalAlignment="Left" Margin="10,2,0,0" Grid.Row="2" VerticalAlignment="Top" Width="127" Click="OpenAddServer"/>
         </Grid>
@@ -64,6 +66,10 @@ Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
             <Label Content="Client Directory" HorizontalAlignment="Left" Margin="10,69,0,0" VerticalAlignment="Top" Width="137" Background="#00000000" Foreground="White"/>
             <TextBox x:Name="ClientDir" HorizontalAlignment="Left" Height="23" Margin="10,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127" IsEnabled="False"/>
             <Button x:Name="ClientBrowse" Content="Browse" Grid.Column="1" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="127" Height="23" Click="SelectClientFolder"/>
+            <Label Content="Set version.dat" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top" Width="127" Background="{x:Null}" Foreground="White"/>
+            <Button x:Name="ApplyVersion" Content="Apply" Grid.Column="1" HorizontalAlignment="Left" Margin="10,159,0,0" VerticalAlignment="Top" Width="127" Click="ApplyVersionChange" Height="23"/>
+            <xctk:IntegerUpDown x:Name="clientVersion" HorizontalAlignment="Left" Height="23" Margin="10,159,0,0" VerticalAlignment="Top" Width="127" FormatString="N0" Minimum="1">
+            </xctk:IntegerUpDown>
         </Grid>
     </Grid>
 </metro:MetroWindow>

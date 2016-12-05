@@ -21,6 +21,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit;
 
 namespace RedirectLauncherMk2_WPF
 {
@@ -68,6 +69,9 @@ namespace RedirectLauncherMk2_WPF
 			Proxy.IsChecked = client.settings.launchDevTools;
 			FolderSelect.Text = client.settings.kananFolder;
 			ClientDir.Text = client.settings.clientInstallDirectory;
+			FolderSelect.ToolTip = client.settings.kananFolder;
+			ClientDir.ToolTip = client.settings.clientInstallDirectory;
+			clientVersion.Value = client.clientVersion;
 			clientDirChanged = false;
 			selectedServerChanged = false;
 			
@@ -133,6 +137,18 @@ namespace RedirectLauncherMk2_WPF
 				ServerList.SelectedIndex = serverList.servers.IndexOf(manager.server);
 			}
 			serverList.saveToFile();
+		}
+
+		private void ApplyVersionChange(object sender, RoutedEventArgs e)
+		{
+			if (System.Windows.MessageBox.Show("You're about to change your version.dat to a different number, this will make the launcher update to the latest version again. Are you sure?", "Change Version", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) == MessageBoxResult.Yes)
+			{
+				if (clientVersion.Value.HasValue)
+				{
+					client.writeVersionData(clientVersion.Value.Value, null);
+					selectedServerChanged = true;
+				}
+			}
 		}
 	}
 }

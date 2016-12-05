@@ -29,7 +29,7 @@ Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
             </Grid>
         </Border>
         <Grid Grid.Row="1">
-            <TextBlock TextAlignment="Center" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="150" Width="274" Text="Redirect Launcher Version -  &#xA;&#xA; Developed by Owen Bennett (Ripxfrostbite) &#xA;&#xA; This launcher is open source software and is licenced under the MIT licence. &#xA;&#xA; To report issues or to request additions to the launcher please visit the Github over at : "/>
+            <TextBlock TextAlignment="Center" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="150" Width="274" Text="Redirect Launcher&#xA;&#xA; Developed by Owen Bennett (Ripxfrostbite) &#xA;&#xA; This launcher is open source software and is licenced under the MIT licence. &#xA;&#xA; To report issues or to request additions to the launcher please visit the Github over at : "/>
             <TextBlock HorizontalAlignment="Left" Margin="10,165,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="274" Height="21" TextAlignment="Center">
                 <Hyperlink NavigateUri="https://github.com/ripxfrostbite/RedirectLauncher" RequestNavigate="OpenGithub">
                     https://github.com/ripxfrostbite/RedirectLauncher
