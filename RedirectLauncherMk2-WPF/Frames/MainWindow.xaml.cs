@@ -4,33 +4,20 @@
 * All code contained in here is licensed under the MIT license.
 * Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
 */
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using MahApps.Metro.Controls;
 using RedirectLauncherMk2_WPF.LauncherLogic;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace RedirectLauncherMk2_WPF
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow
+	public partial class MainWindow : MetroWindow
 	{
 		public LauncherSettings settings;
 		public Game client;
@@ -75,7 +62,7 @@ namespace RedirectLauncherMk2_WPF
 				WebBlock.Height = client.selectedServer.resHeight;
 			else
 				WebBlock.Height = Double.NaN;
-			TitleBlock.Text = client.launcherName;
+			this.Title = client.launcherName;
 			try
 			{
 				WebBlock.Source = new Uri(client.launcherWebpage);

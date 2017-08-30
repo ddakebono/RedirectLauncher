@@ -4,24 +4,12 @@
 * All code contained in here is licensed under the MIT license.
 * Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
 */
-using MetroRadiance.Controls;
-using RedirectLauncherMk2_WPF.LauncherLogic;
+using MahApps.Metro.Controls;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Xceed.Wpf.Toolkit;
 
 namespace RedirectLauncherMk2_WPF
 {

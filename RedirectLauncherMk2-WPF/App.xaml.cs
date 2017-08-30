@@ -5,31 +5,22 @@
 * Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
 */
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using MetroRadiance;
 using System.IO;
-using System.Reflection;
 using System.Diagnostics;
-using Microsoft.Win32;
 
 namespace RedirectLauncherMk2_WPF
 {
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
-	
+
 	public partial class App : Application
 	{
 		public MainWindow main;
 
 		private void Application_Startup(object sender, StartupEventArgs e)
 		{
-			ThemeService.Current.Initialize(this, Theme.Dark, Accent.Purple);
 
 			FileInfo f = new FileInfo("launcherUpdate.exe");
 
