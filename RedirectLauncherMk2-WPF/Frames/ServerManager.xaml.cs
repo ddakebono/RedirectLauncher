@@ -20,6 +20,11 @@ namespace RedirectLauncherMk2_WPF
 				ServerName.IsEnabled = false;
 				ServerName.Text = server.name;
 				PatchdataURL.Text = server.patchdata;
+				Username.Text = server.username;
+				Username.IsEnabled = server.usingNXAuth;
+				Password.Password = server.password;
+				Password.IsEnabled = server.usingNXAuth;
+				UsingPassport.IsChecked = server.usingNXAuth;
 				if (server.launcherPage != null)
 				{
 					LauncherWebpage.Text = server.launcherPage;
@@ -55,6 +60,9 @@ namespace RedirectLauncherMk2_WPF
 
 			server.patchdata = PatchdataURL.Text;
 			server.launcherPage = LauncherWebpage.Text;
+			server.username = Username.Text;
+			server.password = Password.Password;
+			server.usingNXAuth = UsingPassport.IsChecked.GetValueOrDefault(false);
 
 			if (Version.Text.Length > 0)
 				server.patchdataOverride.Add("main_version", Version.Text);
@@ -78,6 +86,12 @@ namespace RedirectLauncherMk2_WPF
 		{
 			server = null;
 			Close();
+		}
+
+		private void PassportChecked(object sender, RoutedEventArgs e)
+		{
+			Username.IsEnabled = UsingPassport.IsChecked.GetValueOrDefault(false);
+			Password.IsEnabled = UsingPassport.IsChecked.GetValueOrDefault(false);
 		}
 	}
 }

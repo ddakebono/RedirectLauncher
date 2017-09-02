@@ -54,7 +54,7 @@ Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
             <Button x:Name="ClientBrowse" Content="Browse" Grid.Column="1" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="127" Height="23" Click="SelectClientFolder"/>
             <Label Content="Set version.dat" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top" Width="127" Background="{x:Null}" Foreground="White"/>
             <Button x:Name="ApplyVersion" Content="Apply" Grid.Column="1" HorizontalAlignment="Left" Margin="10,159,0,0" VerticalAlignment="Top" Width="127" Click="ApplyVersionChange" Height="23"/>
-            <xctk:IntegerUpDown x:Name="clientVersion" HorizontalAlignment="Left" Height="23" Margin="10,159,0,0" VerticalAlignment="Top" Width="127" FormatString="N0" Minimum="1">
+            <xctk:IntegerUpDown x:Name="clientVersion" HorizontalAlignment="Left" Height="23" Margin="10,159,0,0" VerticalAlignment="Top" Width="127" FormatString="N0" Minimum="1" Foreground="White">
             </xctk:IntegerUpDown>
         </Grid>
     </Grid>

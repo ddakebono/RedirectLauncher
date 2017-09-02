@@ -12,19 +12,31 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.IO;
+using System.Security.Cryptography;
+using System.Management;
+using Newtonsoft.Json;
+using System.Net.Http;
+using RedirectLauncherMk2_WPF.LauncherLogic;
 
 namespace RedirectLauncherMk2_WPF
 {
 	public class Server
 	{
+		public string clientID = "7853644408";
 		public string name { get; set; }
 		public string patchdata { get; set; }
 		public string launcherPage { get; set; }
 		public int resWidth { get; set; }
 		public int resHeight { get; set; }
+		public string username { get; set; }
+		public string password { get; set; }
+		public Boolean usingNXAuth { get; set; }
+		private string b64ApiToken;
+		private NxRestAPI restAPI;
+
 		public Dictionary<String, String> patchdataOverride { get; set; }
 
-		public Server(string name, string patchdata, string launcherPage = null, int resWidth = 0, int resHeight = 0, Dictionary<String, String> patchdataOverride = null)
+		public Server(string name, string patchdata, string launcherPage = null, int resWidth = 0, int resHeight = 0, string username = null, string password = null, Boolean usingNXAuth = false, Dictionary<String, String> patchdataOverride = null)
 		{
 			this.name = name;
 			this.patchdata = patchdata;
@@ -32,10 +44,40 @@ namespace RedirectLauncherMk2_WPF
 			this.resHeight = resHeight;
 			this.resWidth = resWidth;
 			this.patchdataOverride = patchdataOverride;
+			this.username = username;
+			this.password = password;
+			this.usingNXAuth = usingNXAuth;
 		}
+
 		public Server()
 		{
 			
+		}
+
+		public int getNxVersion()
+		{
+			if (restAPI == null)
+				restAPI = new NxRestAPI(this);
+
+			return restAPI.getVersion();
+		}
+
+		public string getNxPassport()
+		{
+			if (restAPI == null)
+				restAPI = new NxRestAPI(this);
+
+			return restAPI.getNxPassport();
+		}
+
+		public string getUUID()
+		{
+			ManagementClass mc = new ManagementClass("Win32_ComputerSystemProduct");
+			ManagementObjectCollection moc = mc.GetInstances();
+			foreach (ManagementObject ob in moc)
+				return ob.Properties["UUID"].Value.ToString();
+			return null;
+
 		}
 
 		public Dictionary<String, String> patchData(Game client)
@@ -92,5 +134,6 @@ namespace RedirectLauncherMk2_WPF
 			}
 			return result;
 		}
+
 	}
 }

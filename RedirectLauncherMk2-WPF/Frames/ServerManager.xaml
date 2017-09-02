@@ -2,13 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="Server Manager" Height="450" Width="300" UseLayoutRounding="True" ResizeMode="NoResize">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="1" Width="274" HorizontalAlignment="Left" Margin="10,0,0,0">
+        Title="Server Manager" Height="510" Width="300" UseLayoutRounding="True" ResizeMode="NoResize">
+    <Grid Background="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}">
+        <Grid HorizontalAlignment="Left" Margin="10,0,0,0" Width="274">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -17,27 +13,30 @@
             <Label Content="Server Name" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
             <TextBox x:Name="PatchdataURL" HorizontalAlignment="Left" Height="23" Margin="10,38,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
             <Label Content="Patchdata URL" Grid.Column="1" HorizontalAlignment="Left" Margin="10,38,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
-            <TextBox x:Name="Version" HorizontalAlignment="Left" Height="23" Margin="10,125,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
-            <Label Content="Version" Grid.Column="1" HorizontalAlignment="Left" Margin="10,125,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
-            <TextBox x:Name="PackageServer" HorizontalAlignment="Left" Height="23" Margin="10,153,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
-            <Label Content="Package Server" Grid.Column="1" HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
-            <TextBox x:Name="LoginIP" HorizontalAlignment="Left" Height="23" Margin="10,181,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
-            <Label Content="Login IP" Grid.Column="1" HorizontalAlignment="Left" Margin="10,181,0,0" Width="117" Height="23" Foreground="White" VerticalAlignment="Top" FontSize="11"/>
-            <TextBox HorizontalAlignment="Left" Height="23" Margin="10,209,0,0" TextWrapping="NoWrap" Text="TextBox" VerticalAlignment="Top" Width="117"/>
-            <Label Content="Login Port" Grid.Column="1" HorizontalAlignment="Left" Margin="10,209,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
-            <Label Content="Manual Patchdata Fields (Overrides URL)" HorizontalAlignment="Left" Margin="10,94,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.105,0.269" Grid.ColumnSpan="2" Width="254" Foreground="White"/>
-            <TextBox x:Name="Arguments" HorizontalAlignment="Left" Height="23" Margin="10,237,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
-            <Label Content="Arguments" Grid.Column="1" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
-            <TextBox x:Name="LoginPort" HorizontalAlignment="Left" Height="23" Margin="10,209,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
-            <Label Content="Login Port" Grid.Column="1" HorizontalAlignment="Left" Margin="10,209,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
-            <TextBox x:Name="ModPackRepo" HorizontalAlignment="Left" Height="23" Margin="10,265,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
-            <Label Content="Mod Package Server" Grid.Column="1" HorizontalAlignment="Left" Margin="10,265,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
-            <TextBox x:Name="ModVersion" HorizontalAlignment="Left" Height="23" Margin="10,293,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
-            <Label Content="Mod Version" Grid.Column="1" HorizontalAlignment="Left" Margin="10,293,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
-            <Button Content="Save" HorizontalAlignment="Left" Margin="10,348,0,0" VerticalAlignment="Top" Width="117" Click="SaveChanges"/>
-            <Button Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,348,0,0" VerticalAlignment="Top" Width="117" Click="Cancel"/>
+            <TextBox x:Name="Version" HorizontalAlignment="Left" Height="23" Margin="10,221,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
+            <Label Content="Version" Grid.Column="1" HorizontalAlignment="Left" Margin="10,221,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
+            <TextBox x:Name="PackageServer" HorizontalAlignment="Left" Height="23" Margin="10,249,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
+            <Label Content="Package Server" Grid.Column="1" HorizontalAlignment="Left" Margin="10,249,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
+            <TextBox x:Name="LoginIP" HorizontalAlignment="Left" Height="23" Margin="10,277,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
+            <Label Content="Login IP" Grid.Column="1" HorizontalAlignment="Left" Margin="10,277,0,0" Width="117" Height="23" Foreground="White" VerticalAlignment="Top" FontSize="11"/>
+            <Label Content="Manual Patchdata Fields (Overrides URL)" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.105,0.269" Grid.ColumnSpan="2" Width="254" Foreground="White"/>
+            <TextBox x:Name="Arguments" HorizontalAlignment="Left" Height="23" Margin="10,333,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
+            <Label Content="Arguments" Grid.Column="1" HorizontalAlignment="Left" Margin="10,333,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
+            <TextBox x:Name="LoginPort" HorizontalAlignment="Left" Height="23" Margin="10,305,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
+            <Label Content="Login Port" Grid.Column="1" HorizontalAlignment="Left" Margin="10,305,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
+            <TextBox x:Name="ModPackRepo" HorizontalAlignment="Left" Height="23" Margin="10,361,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
+            <Label Content="Mod Package Server" Grid.Column="1" HorizontalAlignment="Left" Margin="10,361,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
+            <TextBox x:Name="ModVersion" HorizontalAlignment="Left" Height="23" Margin="10,389,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
+            <Label Content="Mod Version" Grid.Column="1" HorizontalAlignment="Left" Margin="10,389,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
+            <Button Content="Save" HorizontalAlignment="Left" Margin="10,440,0,0" VerticalAlignment="Top" Width="117" Click="SaveChanges"/>
+            <Button Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,440,0,0" VerticalAlignment="Top" Width="117" Click="Cancel"/>
             <TextBox x:Name="LauncherWebpage" HorizontalAlignment="Left" Height="23" Margin="10,66,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
             <Label Content="Launcher Webpage" Grid.Column="1" HorizontalAlignment="Left" Margin="10,66,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
+            <CheckBox Name="UsingPassport" Content="Using Passport?" HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Width="117" Click="PassportChecked"/>
+            <Label Content="Username" Grid.Column="1" HorizontalAlignment="Left" Margin="10,94,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
+            <Label Content="Password" Grid.Column="1" HorizontalAlignment="Left" Margin="10,122,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
+            <TextBox x:Name="Username" HorizontalAlignment="Left" Height="23" Margin="10,94,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117" IsEnabled="False"/>
+            <PasswordBox x:Name="Password" HorizontalAlignment="Left" Height="23" Margin="10,122,0,0" VerticalAlignment="Top" Width="117" IsEnabled="False"/>
         </Grid>
     </Grid>
 </Controls:MetroWindow>

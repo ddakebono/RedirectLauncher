@@ -96,6 +96,8 @@ namespace RedirectLauncherMk2_WPF
 
 			Directory.SetCurrentDirectory(settings.clientInstallDirectory);
 			String launchArgs = "code:" + code + " ver:" + clientVersion + " logip:" + loginIp + " logport:" + loginPort + " " + args;
+			if (selectedServer.usingNXAuth)
+				launchArgs += " /P:" + selectedServer.getNxPassport();
 			//Launch kanan
 			if (File.Exists(settings.kananFolder + "\\kanan.py") && settings.launchKanan)
 			{
