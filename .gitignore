@@ -188,3 +188,7 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 *.licenseheader
+
+#Extra Ignores
+.vs/
+.nuget/

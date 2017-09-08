@@ -5,7 +5,9 @@
 * Please fill issue report on https://github.com/ripxfrostbite/RedirectLauncher
 */
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using RedirectLauncherMk2_WPF.LauncherLogic;
+using RedirectLauncherMk2_WPF.Updater;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -21,7 +23,7 @@ namespace RedirectLauncherMk2_WPF
 	{
 		public LauncherSettings settings;
 		public Game client;
-		private ClientUpdater clientUpdater;
+		private ClientUpdaterNew clientUpdater;
 		private ModUpdater modUpdater;
 		private SelfUpdater updater;
 		public Serverlist serverList;
@@ -41,10 +43,11 @@ namespace RedirectLauncherMk2_WPF
 			reloadElements();
 			updater = new SelfUpdater(client.launcherRepo, Properties.Settings.Default.Version, client.remoteLauncherVersion);
 			updater.checkLauncherUpdates(ProgressBar, StatusBlock);
-			clientUpdater = new ClientUpdater(client);
+			clientUpdater = new ClientUpdaterNew(client, this);
 			modUpdater = new ModUpdater(client);
 			reloadElements();
 			StatusBlock.Text = "Ready to Launch!";
+			
 		}
 
 		public void reloadElements()
@@ -77,12 +80,14 @@ namespace RedirectLauncherMk2_WPF
 		private void LaunchGame(object sender, RoutedEventArgs e)
 		{
 			settings.saveToRegistry();
-			clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
-			modUpdater.startModUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
+			clientUpdater.loadManifestForVersion(client.remoteClientVersion);
+			clientUpdater.getInstallDiff();
+			//clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
+			/*modUpdater.startModUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
 			if (client.clientVersion >= client.remoteClientVersion && ((client.clientModVersion >= client.remoteClientModVersion && modUpdater.doesModpackFileExist(client.clientModVersion) && !modUpdater.isUpdateInProgress) || (modUpdater.hasUserSkippedUpdate)) && !clientUpdater.isUpdateInProgress)
 			{
 				client.LaunchGame();
-			}
+			}*/
 		}
 
 		private void handleLinks(object sender, NavigatingCancelEventArgs e)
@@ -94,6 +99,13 @@ namespace RedirectLauncherMk2_WPF
 			}
 			e.Cancel = true;
 			Process.Start(e.Uri.ToString());
+		}
+
+		public async void displayAlertDialog(string title, string message)
+		{
+			WebBlock.Visibility = Visibility.Hidden;
+			await this.ShowMessageAsync(title, message);
+			WebBlock.Visibility = Visibility.Visible;
 		}
 
 		private void OpenAboutWindow(object sender, RoutedEventArgs e)

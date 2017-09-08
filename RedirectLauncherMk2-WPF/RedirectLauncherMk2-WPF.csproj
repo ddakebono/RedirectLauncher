@@ -147,6 +147,7 @@
     <Compile Include="LauncherLogic\LauncherSettings.cs" />
     <Compile Include="LauncherLogic\NxRestAPI.cs" />
     <Compile Include="LauncherLogic\Server.cs" />
+    <Compile Include="Updater\ClientUpdaterNew.cs" />
     <Page Include="Frames\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
