@@ -11,6 +11,8 @@ using RedirectLauncherMk2_WPF.Updater;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Navigation;
 
@@ -27,7 +29,9 @@ namespace RedirectLauncherMk2_WPF
 		private ModUpdater modUpdater;
 		private SelfUpdater updater;
 		public Serverlist serverList;
+		public SynchronizationContext synchronization;
 		private bool pageHasLoaded = false;
+		private bool launching = false;
 
 		public MainWindow()
 		{
@@ -35,6 +39,7 @@ namespace RedirectLauncherMk2_WPF
 			client = new Game(settings);
 			serverList = new Serverlist();
 			InitializeComponent();
+			synchronization = SynchronizationContext.Current;
 		}
 
 		private void windowIsReady(object sender, EventArgs e)
@@ -77,11 +82,47 @@ namespace RedirectLauncherMk2_WPF
 			}
 		}
 
-		private void LaunchGame(object sender, RoutedEventArgs e)
+		private async void LaunchGame(object sender, RoutedEventArgs e)
 		{
-			settings.saveToRegistry();
-			clientUpdater.loadManifestForVersion(client.remoteClientVersion);
-			clientUpdater.getInstallDiff();
+			if (!launching)
+			{
+				launching = true;
+				settings.saveToRegistry();
+				await clientUpdater.loadManifestForVersion(client.remoteClientVersion);
+				StatusBlock.Text = "Processing manifest and parsing install files...";
+				await clientUpdater.getInstallDiff(new Progress<int>(p =>
+				{
+					ProgressBar.Value = p;
+					StatusPercentBlock.Text = "(" + p.ToString() + "%)";
+				}));
+				if (client.clientVersion < client.remoteClientVersion)
+				{
+					MessageDialogResult result = await displayAlertDialog("Update Required", clientUpdater.FilesNeedingUpdate.Count + " Files need to be downloaded to upgrade to version " + client.remoteClientVersion, MessageDialogStyle.AffirmativeAndNegative);
+					if (result.Equals(MessageDialogResult.Affirmative))
+					{
+						StatusBlock.Text = "Downloading updated files";
+						if (await clientUpdater.startUpdate(new Progress<int>(p =>
+							 {
+								 ProgressBar.Value = p;
+								 Console.WriteLine("PERCENTAGE: " + p.ToString());
+								 StatusPercentBlock.Text = "(" + p.ToString() + "%)";
+							 }), new Progress<String>(p =>
+							 {
+								 StatusBlock.Text = p;
+							 })))
+						{
+							client.writeVersionData(client.remoteClientVersion, ClientVersionBlock);
+							await displayAlertDialog("Update Complete!", "The update has completed successfully, you may now launch the client!");
+							StatusBlock.Text = "Update Completed!";
+						}
+					}
+					launching = false;
+				}
+				else
+				{
+					client.LaunchGame();
+				}
+			}
 			//clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
 			/*modUpdater.startModUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
 			if (client.clientVersion >= client.remoteClientVersion && ((client.clientModVersion >= client.remoteClientModVersion && modUpdater.doesModpackFileExist(client.clientModVersion) && !modUpdater.isUpdateInProgress) || (modUpdater.hasUserSkippedUpdate)) && !clientUpdater.isUpdateInProgress)
@@ -101,11 +142,12 @@ namespace RedirectLauncherMk2_WPF
 			Process.Start(e.Uri.ToString());
 		}
 
-		public async void displayAlertDialog(string title, string message)
+		public async Task<MessageDialogResult> displayAlertDialog(string title, string message, MessageDialogStyle style = MessageDialogStyle.Affirmative)
 		{
 			WebBlock.Visibility = Visibility.Hidden;
-			await this.ShowMessageAsync(title, message);
+			MessageDialogResult result = await this.ShowMessageAsync(title, message, style);
 			WebBlock.Visibility = Visibility.Visible;
+			return result;
 		}
 
 		private void OpenAboutWindow(object sender, RoutedEventArgs e)

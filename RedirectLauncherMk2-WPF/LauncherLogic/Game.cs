@@ -200,7 +200,8 @@ namespace RedirectLauncherMk2_WPF
 
 		public void writeVersionData(int newVersion, TextBlock clientVersionBlock)
 		{
-			File.WriteAllBytes(settings.clientInstallDirectory + "\\version.dat", BitConverter.GetBytes(newVersion));
+			//This file is updated with the update download
+			//File.WriteAllBytes(settings.clientInstallDirectory + "\\version.dat", BitConverter.GetBytes(newVersion));
 			clientVersion = BitConverter.ToInt32(File.ReadAllBytes(settings.clientInstallDirectory + "\\version.dat"), 0);
 			if (clientVersionBlock != null)
 			{
