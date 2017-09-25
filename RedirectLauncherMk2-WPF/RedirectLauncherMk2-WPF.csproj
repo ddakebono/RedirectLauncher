@@ -147,7 +147,7 @@
     <Compile Include="LauncherLogic\LauncherSettings.cs" />
     <Compile Include="LauncherLogic\NxRestAPI.cs" />
     <Compile Include="LauncherLogic\Server.cs" />
-    <Compile Include="Updater\ClientUpdaterNew.cs" />
+    <Compile Include="Updaters\ClientUpdater.cs" />
     <Page Include="Frames\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -164,21 +164,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LauncherLogic\Serverlist.cs" />
-    <Compile Include="Updater\ClientUpdater.cs" />
-    <Compile Include="LauncherLogic\ModUpdater.cs" />
-    <Compile Include="Frames\Options.xaml.cs">
-      <DependentUpon>Options.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="LauncherLogic\SelfUpdater.cs" />
+    <Compile Include="Updaters\ModUpdateNew.cs" />
+    <Compile Include="Updaters\ModUpdater.cs" />
+    <Compile Include="Updaters\SelfUpdater.cs" />
     <Compile Include="LauncherLogic\Game.cs" />
     <Compile Include="Frames\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Frames\Options.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Frames\ServerManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

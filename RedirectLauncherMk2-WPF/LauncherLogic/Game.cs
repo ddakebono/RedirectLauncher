@@ -66,7 +66,7 @@ namespace RedirectLauncherMk2_WPF
 			{
 				//This should only be reached should a client version.dat not be found at all
 				clientVersion = 0;
-				writeVersionData(clientVersion, null);
+				writeVersionData(clientVersion, null, true);
 			}
 
 			modpackDirectory = new DirectoryInfo(settings.clientInstallDirectory + "\\modpacks");
@@ -198,10 +198,11 @@ namespace RedirectLauncherMk2_WPF
 			return result;
 		}
 
-		public void writeVersionData(int newVersion, TextBlock clientVersionBlock)
+		public void writeVersionData(int newVersion, TextBlock clientVersionBlock, bool writeFile)
 		{
 			//This file is updated with the update download
-			//File.WriteAllBytes(settings.clientInstallDirectory + "\\version.dat", BitConverter.GetBytes(newVersion));
+			if(writeFile)
+				File.WriteAllBytes(settings.clientInstallDirectory + "\\version.dat", BitConverter.GetBytes(newVersion));
 			clientVersion = BitConverter.ToInt32(File.ReadAllBytes(settings.clientInstallDirectory + "\\version.dat"), 0);
 			if (clientVersionBlock != null)
 			{

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace RedirectLauncherMk2_WPF.Updater
 {
-	class ClientUpdaterNew
+	class ClientUpdater
 	{
 		List<ManifestFile> Files = new List<ManifestFile>();
 		public Queue<ManifestFile> FilesNeedingUpdate = new Queue<ManifestFile>();
@@ -25,7 +25,7 @@ namespace RedirectLauncherMk2_WPF.Updater
 		private DirectoryInfo updateExtractDirectory;
 		private MainWindow LauncherWindow;
 
-		public ClientUpdaterNew(Game Client, MainWindow LauncherWindow)
+		public ClientUpdater(Game Client, MainWindow LauncherWindow)
 		{
 			this.Client = Client;
 			this.LauncherWindow = LauncherWindow;
