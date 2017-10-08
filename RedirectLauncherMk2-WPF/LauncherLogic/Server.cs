@@ -17,12 +17,12 @@ using System.Management;
 using Newtonsoft.Json;
 using System.Net.Http;
 using RedirectLauncherMk2_WPF.LauncherLogic;
+using NxApiCommon;
 
 namespace RedirectLauncherMk2_WPF
 {
 	public class Server
 	{
-		public string clientID = "7853644408";
 		public string name { get; set; }
 		public string patchdata { get; set; }
 		public string launcherPage { get; set; }
@@ -32,7 +32,8 @@ namespace RedirectLauncherMk2_WPF
 		public string password { get; set; }
 		public Boolean usingNXAuth { get; set; }
 		private string b64ApiToken;
-		private NxRestAPI restAPI;
+		private NxApiClient restAPI;
+		private readonly string appID = "10200";
 
 		public Dictionary<String, String> patchdataOverride { get; set; }
 
@@ -57,7 +58,7 @@ namespace RedirectLauncherMk2_WPF
 		public int getNxVersion()
 		{
 			if (restAPI == null)
-				restAPI = new NxRestAPI(this);
+				restAPI = new NxApiClient(username, password, appID);
 
 			return restAPI.getVersion();
 		}
@@ -65,19 +66,9 @@ namespace RedirectLauncherMk2_WPF
 		public string getNxPassport()
 		{
 			if (restAPI == null)
-				restAPI = new NxRestAPI(this);
+				restAPI = new NxApiClient(username, password, appID);
 
 			return restAPI.getNxPassport();
-		}
-
-		public string getUUID()
-		{
-			ManagementClass mc = new ManagementClass("Win32_ComputerSystemProduct");
-			ManagementObjectCollection moc = mc.GetInstances();
-			foreach (ManagementObject ob in moc)
-				return ob.Properties["UUID"].Value.ToString();
-			return null;
-
 		}
 
 		public Dictionary<String, String> patchData(Game client)

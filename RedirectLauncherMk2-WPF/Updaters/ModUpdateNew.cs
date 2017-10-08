@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RedirectLauncherMk2_WPF.Updaters
@@ -12,6 +14,7 @@ namespace RedirectLauncherMk2_WPF.Updaters
 	{
 		private Game client;
 		private string serverModpack;
+		private readonly object syncLock = new object();
 
 		public ModUpdateNew(Game client)
 		{
@@ -29,8 +32,21 @@ namespace RedirectLauncherMk2_WPF.Updaters
 				web.DownloadProgressChanged += (o, e) => {
 					progress.Report(e.ProgressPercentage);
 				};
-				web.DownloadFileAsync(new Uri(client.launcherModRepo + "package/modpack-" + client.remoteClientModVersion + ".pack"), client.settings.clientInstallDirectory + "\\modpacks\\zzz" + serverModpack + "-" + client.remoteClientModVersion + ".pack");
+				web.DownloadFileCompleted += completedDownload;
+				lock (syncLock)
+				{
+					web.DownloadFileAsync(new Uri(client.launcherModRepo + "package/modpack-" + client.remoteClientModVersion + ".pack"), client.settings.clientInstallDirectory + "\\modpacks\\zzz" + serverModpack + "-" + client.remoteClientModVersion + ".pack", syncLock);
+					Monitor.Wait(syncLock);
+				}
 			});
+		}
+
+		public void completedDownload(object sender, AsyncCompletedEventArgs e)
+		{
+			lock (e.UserState)
+			{
+				Monitor.Pulse(e.UserState);
+			}
 		}
 
 		public bool doesModpackFileExist(int modVersion)

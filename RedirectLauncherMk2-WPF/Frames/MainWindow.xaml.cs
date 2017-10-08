@@ -127,7 +127,7 @@ namespace RedirectLauncherMk2_WPF
 				else
 				{
 					launching = true;
-					if ((client.clientModVersion >= client.remoteClientModVersion && modUpdater.doesModpackFileExist(client.clientModVersion)))
+					if (client.clientModVersion >= client.remoteClientModVersion)
 					{
 						client.LaunchGame();
 					}
@@ -159,12 +159,6 @@ namespace RedirectLauncherMk2_WPF
 					}
 				}
 			}
-			//clientUpdater.checkClientUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
-			/*modUpdater.startModUpdate(ProgressBar, ClientVersionBlock, StatusBlock, StatusPercentBlock);
-			if (client.clientVersion >= client.remoteClientVersion && ((client.clientModVersion >= client.remoteClientModVersion && modUpdater.doesModpackFileExist(client.clientModVersion) && !modUpdater.isUpdateInProgress) || (modUpdater.hasUserSkippedUpdate)) && !clientUpdater.isUpdateInProgress)
-			{
-				client.LaunchGame();
-			}*/
 		}
 
 		private void handleLinks(object sender, NavigatingCancelEventArgs e)
