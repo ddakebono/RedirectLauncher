@@ -1,3 +1,14 @@
 ﻿[
-	{ "name": "Nexon NA", "patchdata": "http://mabipatchinfo.nexon.net/patch/patch.txt", "launcherPage": "http://mabinogi.nexon.net/launcher", "resHeight": 379, "resWidth": 714}
+  {
+    "name": "Nexon NA",
+    "patchdata": "http://mabipatchinfo.nexon.net/patch/patch.txt",
+    "launcherPage": "http://mabinogi.nexon.net/launcher",
+    "resHeight": 379,
+    "resWidth": 714
+  },
+  {
+    "name": "RDG DireWolf20",
+    "patchdata": "http://aurares.potato.moe/patchdata-mc.txt",
+    "patchObjectsHost": "http://aurares.potato.moe/patchdata-mc/"
+  }
 ]

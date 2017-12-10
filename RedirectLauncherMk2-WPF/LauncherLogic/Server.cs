@@ -6,17 +6,9 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using System.Net;
 using System.IO;
-using System.Security.Cryptography;
-using System.Management;
-using Newtonsoft.Json;
-using System.Net.Http;
-using RedirectLauncherMk2_WPF.LauncherLogic;
 using NxApiCommon;
 
 namespace RedirectLauncherMk2_WPF
@@ -31,13 +23,13 @@ namespace RedirectLauncherMk2_WPF
 		public string username { get; set; }
 		public string password { get; set; }
 		public Boolean usingNXAuth { get; set; }
+		public string patchObjectsHost;
 		private string b64ApiToken;
 		private NxApiClient restAPI;
-		private readonly string appID = "10200";
 
 		public Dictionary<String, String> patchdataOverride { get; set; }
 
-		public Server(string name, string patchdata, string launcherPage = null, int resWidth = 0, int resHeight = 0, string username = null, string password = null, Boolean usingNXAuth = false, Dictionary<String, String> patchdataOverride = null)
+		public Server(string name, string patchdata, string launcherPage = null, int resWidth = 0, int resHeight = 0, string username = null, string password = null, Boolean usingNXAuth = false, string patchObjectsHost = null, Dictionary<String, String> patchdataOverride = null)
 		{
 			this.name = name;
 			this.patchdata = patchdata;
@@ -47,6 +39,7 @@ namespace RedirectLauncherMk2_WPF
 			this.patchdataOverride = patchdataOverride;
 			this.username = username;
 			this.password = password;
+			this.patchObjectsHost = patchObjectsHost;
 			this.usingNXAuth = usingNXAuth;
 		}
 
@@ -58,7 +51,7 @@ namespace RedirectLauncherMk2_WPF
 		public int getNxVersion()
 		{
 			if (restAPI == null)
-				restAPI = new NxApiClient(username, password, appID);
+				restAPI = new NxApiClient(username, password, Properties.Settings.Default.AppID);
 
 			return restAPI.getVersion();
 		}
@@ -66,7 +59,7 @@ namespace RedirectLauncherMk2_WPF
 		public string getNxPassport()
 		{
 			if (restAPI == null)
-				restAPI = new NxApiClient(username, password, appID);
+				restAPI = new NxApiClient(username, password, Properties.Settings.Default.AppID);
 
 			return restAPI.getNxPassport();
 		}

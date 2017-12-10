@@ -96,32 +96,39 @@ namespace RedirectLauncherMk2_WPF
 				settings.saveToRegistry();
 				if (client.clientVersion < client.remoteClientVersion)
 				{
-						await clientUpdater.loadManifestForVersion(client.remoteClientVersion);
-					StatusBlock.Text = "Processing manifest and parsing install files...";
-					await clientUpdater.getInstallDiff(new Progress<int>(p =>
-					{
-						ProgressBar.Value = p;
-						StatusPercentBlock.Text = "(" + p.ToString() + "%)";
-					}));
+                    if (await clientUpdater.loadManifestForVersion(client.remoteClientVersion, client.selectedServer.patchObjectsHost))
+                    {
+                        StatusBlock.Text = "Processing manifest and parsing install files...";
+                        await clientUpdater.getInstallDiff(new Progress<int>(p =>
+                        {
+                            ProgressBar.Value = p;
+                            StatusPercentBlock.Text = "(" + p.ToString() + "%)";
+                        }));
 
-					MessageDialogResult result = await displayAlertDialog("Update Required", clientUpdater.FilesNeedingUpdate.Count + " Files need to be downloaded to upgrade to version " + client.remoteClientVersion, MessageDialogStyle.AffirmativeAndNegative);
-					if (result.Equals(MessageDialogResult.Affirmative))
-					{
-						StatusBlock.Text = "Downloading updated files";
-						if (await clientUpdater.startUpdate(new Progress<int>(p =>
-							 {
-								 ProgressBar.Value = p;
-								 StatusPercentBlock.Text = "(" + p.ToString() + "%)";
-							 }), new Progress<String>(p =>
-							 {
-								 StatusBlock.Text = p;
-							 })))
-						{
-							client.writeVersionData(client.remoteClientVersion, ClientVersionBlock, false);
-							await displayAlertDialog("Update Complete!", "The update has completed successfully, you may now launch the client!");
-							StatusBlock.Text = "Update Completed!";
-						}
-					}
+                        MessageDialogResult result = await displayAlertDialog("Update Required", clientUpdater.FilesNeedingUpdate.Count + " Files need to be downloaded to upgrade to version " + client.remoteClientVersion, MessageDialogStyle.AffirmativeAndNegative);
+                        if (result.Equals(MessageDialogResult.Affirmative))
+                        {
+                            StatusBlock.Text = "Downloading updated files";
+                            if (await clientUpdater.startUpdate(new Progress<int>(p =>
+                                 {
+                                     ProgressBar.Value = p;
+                                     StatusPercentBlock.Text = "(" + p.ToString() + "%)";
+                                 }), new Progress<String>(p =>
+                                 {
+                                     StatusBlock.Text = p;
+                                 })))
+                            {
+                                client.writeVersionData(client.remoteClientVersion, ClientVersionBlock, false);
+                                await displayAlertDialog("Update Complete!", "The update has completed successfully, you may now launch the client!");
+                                StatusBlock.Text = "Update Completed!";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        await displayAlertDialog("Update Failed!", clientUpdater.lastError);
+                        StatusBlock.Text = "Update failed!";
+                    }
 					launching = false;
 				}
 				else
@@ -254,7 +261,7 @@ namespace RedirectLauncherMk2_WPF
 		private async void VerifyClick(object sender, RoutedEventArgs e)
 		{
 			StatusBlock.Text = "Downloading manifest for version " + clientVersion;
-			await clientUpdater.loadManifestForVersion(client.clientVersion);
+			await clientUpdater.loadManifestForVersion(client.clientVersion, client.selectedServer.patchObjectsHost);
 			StatusBlock.Text = "Verifying client installation data";
 			await clientUpdater.getInstallDiff(new Progress<int>(p =>
 			{

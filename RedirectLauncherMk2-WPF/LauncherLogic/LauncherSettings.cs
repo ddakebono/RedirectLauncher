@@ -24,10 +24,10 @@ namespace RedirectLauncherMk2_WPF.LauncherLogic
 
 		public void loadFromRegistry()
 		{
-			LauncherSubkey = Registry.CurrentUser.OpenSubKey(@"Software\RedirectGaming\RedirectLauncher", true);
+			LauncherSubkey = Registry.CurrentUser.OpenSubKey(@"Software\RedirectGaming\RedirectLauncher-" + Properties.Settings.Default.AppID, true);
 			if (LauncherSubkey == null) 
 			{
-				LauncherSubkey = Registry.CurrentUser.CreateSubKey(@"Software\RedirectGaming\RedirectLauncher");
+				LauncherSubkey = Registry.CurrentUser.CreateSubKey(@"Software\RedirectGaming\RedirectLauncher-" + Properties.Settings.Default.AppID);
 				saveToRegistry();
 			}
 			selectedServer = Convert.ToInt16(LauncherSubkey.GetValue("SelectedServer"));

@@ -1,12 +1,9 @@
-﻿using MahApps.Metro.Controls;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,16 +11,18 @@ using System.Threading.Tasks;
 
 namespace RedirectLauncherMk2_WPF.Updater
 {
-	class ClientUpdater
+    class ClientUpdater
 	{
 		List<ManifestFile> Files = new List<ManifestFile>();
 		public Queue<ManifestFile> FilesNeedingUpdate = new Queue<ManifestFile>();
 		private int TargetVersion = 0;
-		private string NexonPatchDomain = "https://download2.nexon.net/Game/nxl/games/10200/"; //We fetch all the manifest data from here
+		private string DefaultPatchDomain = "https://download2.nexon.net/Game/nxl/games/10200/";
 		private Game Client;
+        public String lastError;
 		private DirectoryInfo updateDirectory;
 		private DirectoryInfo updateExtractDirectory;
 		private MainWindow LauncherWindow;
+		private string appID;
 
 		public ClientUpdater(Game Client, MainWindow LauncherWindow)
 		{
@@ -41,9 +40,10 @@ namespace RedirectLauncherMk2_WPF.Updater
 				updateExtractDirectory.Create();
 		}
 
-		public async Task loadManifestForVersion(int Version)
+		public async Task<bool> loadManifestForVersion(int Version, string patchDomain)
 		{
-			await Task.Run(() =>
+			this.DefaultPatchDomain = patchDomain;
+			return await Task.Run(() =>
 			{
 				prepareUpdater();
 
@@ -51,15 +51,14 @@ namespace RedirectLauncherMk2_WPF.Updater
 				{
 					try
 					{
-						dl.DownloadFile(NexonPatchDomain + "10200." + Version + "R.manifest.hash", updateDirectory.FullName + "\\manifest.hash");
-						dl.DownloadFile(NexonPatchDomain + File.ReadAllText(updateDirectory.FullName + "\\manifest.hash"), updateDirectory.FullName + "\\update.manifest");
+						dl.DownloadFile(DefaultPatchDomain + Properties.Settings.Default.AppID + "." + Version + "R.manifest.hash", updateDirectory.FullName + "\\manifest.hash");
+						dl.DownloadFile(DefaultPatchDomain + File.ReadAllText(updateDirectory.FullName + "\\manifest.hash"), updateDirectory.FullName + "\\update.manifest");
 					}
 					catch (WebException e)
 					{
 						if (((HttpWebResponse)e.Response).StatusCode.Equals(HttpStatusCode.NotFound))
 						{
-							LauncherWindow.displayAlertDialog("Update Failed!", "It seems that we couldn't get the manifest for version " + Version + " please try later...");
-							LauncherWindow.StatusBlock.Text = "Update Failed";
+                            lastError = "It seems that we couldn't get the manifest for version " + Version + " please try later...";
 							return false;
 						}
 					}
@@ -71,12 +70,12 @@ namespace RedirectLauncherMk2_WPF.Updater
 				ms.ReadByte();
 				DeflateStream df = new DeflateStream(ms, CompressionMode.Decompress);
 				String manifestJson = new StreamReader(df, Encoding.UTF8).ReadToEnd();
-
-				dynamic json = JsonConvert.DeserializeObject<dynamic>(manifestJson);
-				File.WriteAllText(updateDirectory + "\\deserialized.json",manifestJson);
+                File.WriteAllText(updateDirectory + "\\deserialized.json", manifestJson);
+                dynamic json = JsonConvert.DeserializeObject<dynamic>(manifestJson);
+                bool noBase64 = ((JObject)json).GetValue("NoBase64").ToObject<bool>();
 				foreach (JProperty prop in ((JObject)json.files).Children())
 				{
-					Files.Add(new ManifestFile(prop.Name, prop.Value["fsize"].ToObject<long>(), prop.Value["mtime"].ToObject<long>(), prop.Value["objects"].ToObject<List<String>>(), prop.Value["objects_fsize"].ToObject<List<String>>()));
+					Files.Add(new ManifestFile(prop.Name, prop.Value["fsize"].ToObject<long>(), prop.Value["mtime"].ToObject<long>(), prop.Value["objects"].ToObject<List<String>>(), prop.Value["objects_fsize"].ToObject<List<String>>(), noBase64));
 				}
 
 				if (Files.Count > 0)
@@ -211,8 +210,8 @@ namespace RedirectLauncherMk2_WPF.Updater
 		private byte[] downloadFromServerAsync(IProgress<int> progress, String file, String fileName, String expectedSize)
 		{
 			WebClient client = new WebClient();
-			Console.WriteLine("Downloading file from " + NexonPatchDomain + "10200/" + file.Substring(0, 2) + "/" + file);
-			MemoryStream ms = new MemoryStream(client.DownloadData(NexonPatchDomain + "10200/" + file.Substring(0, 2) + "/" + file));
+			Console.WriteLine("Downloading file from " + DefaultPatchDomain + appID + "/" + file.Substring(0, 2) + "/" + file);
+			MemoryStream ms = new MemoryStream(client.DownloadData(DefaultPatchDomain + appID + "/" + file.Substring(0, 2) + "/" + file));
 			MemoryStream msCopy = new MemoryStream();
 			//Gross work around to the stream going out of position
 			ms.CopyTo(msCopy);
@@ -279,10 +278,17 @@ namespace RedirectLauncherMk2_WPF.Updater
 		public List<String> fileParts;
 		public List<String> filePartsSizes;
 
-		public ManifestFile(String name, long fileSize, long buildDate, List<String> fileParts, List<String> filePartsSizes)
+		public ManifestFile(String name, long fileSize, long buildDate, List<String> fileParts, List<String> filePartsSizes, bool noBase64)
 		{
-			byte[] data = Convert.FromBase64String(name);
-			this.name = Encoding.Unicode.GetString(data).Substring(1);
+            if (!noBase64)
+            {
+                byte[] data = Convert.FromBase64String(name);
+                this.name = Encoding.Unicode.GetString(data).Substring(1);
+            }
+            else
+            {
+                this.name = name;
+            }
 			this.fileSize = fileSize;
 			this.buildDate = buildDate;
 			this.fileParts = fileParts;

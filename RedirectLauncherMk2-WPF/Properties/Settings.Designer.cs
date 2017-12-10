@@ -31,5 +31,14 @@ namespace RedirectLauncherMk2_WPF.Properties {
                 return ((int)(this["Version"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10200")]
+        public string AppID {
+            get {
+                return ((string)(this["AppID"]));
+            }
+        }
     }
 }

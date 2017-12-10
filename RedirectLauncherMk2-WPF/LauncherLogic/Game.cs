@@ -47,7 +47,7 @@ namespace RedirectLauncherMk2_WPF
 		public bool offlineMode;
 		//Extra data
 		public int code = 1622;
-		public LauncherSettings settings;
+        public LauncherSettings settings;
 		public String devtools = "Morrighan.exe";
 		const String gameBinary = "client.exe";
 		public Server selectedServer;

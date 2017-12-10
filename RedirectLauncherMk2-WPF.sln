@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedirectLauncherMk2-WPF", "RedirectLauncherMk2-WPF\RedirectLauncherMk2-WPF.csproj", "{524378E8-87B5-42A0-847C-EF92EAFD984A}"
 EndProject
@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D9D7DD
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NxApiCommon", "C:\Users\gandv\source\repos\NxApiCommon\NxApiCommon\NxApiCommon.csproj", "{39014512-841C-457F-9E25-AFA9EB9D4567}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NxApiCommon", "C:\Users\DDAkebono\source\repos\NxApiCommon\NxApiCommon\NxApiCommon.csproj", "{39014512-841C-457F-9E25-AFA9EB9D4567}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

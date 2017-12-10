@@ -11,11 +11,11 @@ using System.Diagnostics;
 
 namespace RedirectLauncherMk2_WPF
 {
-	/// <summary>
-	/// Interaction logic for App.xaml
-	/// </summary>
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
 
-	public partial class App : Application
+    public partial class App : Application
 	{
 		public MainWindow main;
 
