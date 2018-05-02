@@ -34,6 +34,7 @@ namespace RedirectLauncherMk2_WPF
 		public int remoteClientVersion;
 		public int remoteLauncherVersion;
 		public int remoteClientModVersion;
+        public String mainVersionHash;
 		public bool canPatch;
 		public String launcherRepo;
 		public String launcherModRepo;
@@ -256,7 +257,15 @@ namespace RedirectLauncherMk2_WPF
 			{
 				remoteClientVersion = 0;
 			}
-			try
+            try
+            {
+                mainVersionHash = patchdata["main_version_hash"];
+            }
+            catch (KeyNotFoundException e)
+            {
+                mainVersionHash = "";
+            }
+            try
 			{
 				remoteLauncherVersion = int.Parse(patchdata["redirectlauncherver"]);
 			}

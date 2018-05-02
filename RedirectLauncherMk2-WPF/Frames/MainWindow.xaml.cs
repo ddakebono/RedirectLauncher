@@ -96,7 +96,7 @@ namespace RedirectLauncherMk2_WPF
 				settings.saveToRegistry();
 				if (client.clientVersion < client.remoteClientVersion)
 				{
-                    if (await clientUpdater.loadManifestForVersion(client.remoteClientVersion, client.selectedServer.patchObjectsHost))
+                    if (await clientUpdater.loadManifestForVersion(client.remoteClientVersion, client.selectedServer.patchObjectsHost, client.mainVersionHash))
                     {
                         StatusBlock.Text = "Processing manifest and parsing install files...";
                         await clientUpdater.getInstallDiff(new Progress<int>(p =>
@@ -261,7 +261,7 @@ namespace RedirectLauncherMk2_WPF
 		private async void VerifyClick(object sender, RoutedEventArgs e)
 		{
 			StatusBlock.Text = "Downloading manifest for version " + clientVersion;
-			await clientUpdater.loadManifestForVersion(client.clientVersion, client.selectedServer.patchObjectsHost);
+			await clientUpdater.loadManifestForVersion(client.clientVersion, client.selectedServer.patchObjectsHost, client.mainVersionHash);
 			StatusBlock.Text = "Verifying client installation data";
 			await clientUpdater.getInstallDiff(new Progress<int>(p =>
 			{

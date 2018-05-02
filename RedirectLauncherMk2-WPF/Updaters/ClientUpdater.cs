@@ -22,7 +22,7 @@ namespace RedirectLauncherMk2_WPF.Updater
 		private DirectoryInfo updateDirectory;
 		private DirectoryInfo updateExtractDirectory;
 		private MainWindow LauncherWindow;
-		private string appID;
+		private string appID = Properties.Settings.Default.AppID;
 
 		public ClientUpdater(Game Client, MainWindow LauncherWindow)
 		{
@@ -40,9 +40,10 @@ namespace RedirectLauncherMk2_WPF.Updater
 				updateExtractDirectory.Create();
 		}
 
-		public async Task<bool> loadManifestForVersion(int Version, string patchDomain)
+		public async Task<bool> loadManifestForVersion(int Version, string patchDomain, String mainVersionHash)
 		{
-			this.DefaultPatchDomain = patchDomain;
+            if(patchDomain!=null)
+			    this.DefaultPatchDomain = patchDomain;
 			return await Task.Run(() =>
 			{
 				prepareUpdater();
@@ -51,7 +52,7 @@ namespace RedirectLauncherMk2_WPF.Updater
 				{
 					try
 					{
-						dl.DownloadFile(DefaultPatchDomain + Properties.Settings.Default.AppID + "." + Version + "R.manifest.hash", updateDirectory.FullName + "\\manifest.hash");
+						dl.DownloadFile(DefaultPatchDomain + Properties.Settings.Default.AppID + "." + Version + "R_" + mainVersionHash + ".manifest.hash", updateDirectory.FullName + "\\manifest.hash");
 						dl.DownloadFile(DefaultPatchDomain + File.ReadAllText(updateDirectory.FullName + "\\manifest.hash"), updateDirectory.FullName + "\\update.manifest");
 					}
 					catch (WebException e)
@@ -72,7 +73,12 @@ namespace RedirectLauncherMk2_WPF.Updater
 				String manifestJson = new StreamReader(df, Encoding.UTF8).ReadToEnd();
                 File.WriteAllText(updateDirectory + "\\deserialized.json", manifestJson);
                 dynamic json = JsonConvert.DeserializeObject<dynamic>(manifestJson);
-                bool noBase64 = ((JObject)json).GetValue("NoBase64").ToObject<bool>();
+                bool noBase64 = false;
+                try
+                {
+                    noBase64 = ((JObject)json).GetValue("NoBase64").ToObject<bool>();
+                }
+                catch (NullReferenceException) { }
 				foreach (JProperty prop in ((JObject)json.files).Children())
 				{
 					Files.Add(new ManifestFile(prop.Name, prop.Value["fsize"].ToObject<long>(), prop.Value["mtime"].ToObject<long>(), prop.Value["objects"].ToObject<List<String>>(), prop.Value["objects_fsize"].ToObject<List<String>>(), noBase64));
