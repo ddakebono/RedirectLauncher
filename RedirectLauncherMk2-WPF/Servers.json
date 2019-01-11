@@ -7,8 +7,9 @@
     "resWidth": 714
   },
   {
-    "name": "RDG DireWolf20",
-    "patchdata": "http://aurares.potato.moe/patchdata-mc.txt",
-    "patchObjectsHost": "http://aurares.potato.moe/patchdata-mc/"
+    "clientID": "7853644408",
+    "name": "Redirect Aura",
+    "patchdata": "http://aurares.potato.moe/patchdata.txt",
+    "usingNXAuth": false,
   }
 ]
