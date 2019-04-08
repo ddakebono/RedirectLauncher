@@ -84,6 +84,10 @@ namespace RedirectLauncherMk2_WPF
 			clientModVersion = 0;
 
 			handlePatchData(new Dictionary<String, String>());
+
+            
+
+
 		}
 
 		public void LaunchGame()
@@ -100,13 +104,12 @@ namespace RedirectLauncherMk2_WPF
 			if (selectedServer.usingNXAuth)
 				launchArgs += " /P:" + selectedServer.getNxPassport();
 			//Launch kanan
-			if (File.Exists(settings.kananFolder + "\\kanan.py") && settings.launchKanan)
+			if (File.Exists(settings.kananFolder + "\\loader.exe") && settings.launchKanan)
 			{
 				ProcessStartInfo kananLaunch = new ProcessStartInfo();
-				kananLaunch.FileName = "python.exe";
+				kananLaunch.FileName = settings.kananFolder + "\\loader.exe";
 				kananLaunch.UseShellExecute = false;
 				kananLaunch.WorkingDirectory = settings.kananFolder;
-				kananLaunch.Arguments = "kanan.py";
 				Process.Start(kananLaunch);
 			}
 			//Launch game binary or dev tool
@@ -362,7 +365,7 @@ namespace RedirectLauncherMk2_WPF
 				if (selectedServer != null && selectedServer.launcherPage != null)
 					launcherWebpage = selectedServer.launcherPage;
 				else
-					launcherWebpage = "about:blank";
+					launcherWebpage = null;
 			}
 		}
 
@@ -372,6 +375,8 @@ namespace RedirectLauncherMk2_WPF
 			clientModVersion = tryGetModpackVersion(modpackDirectory.FullName, selectedServer.name.Replace(' ', '_'));
 			Dictionary<String, String> data = selectedServer.patchData(this);
 			handlePatchData(data);
-		}
+            if (selectedServer.usingNXAuth)
+                remoteClientVersion = selectedServer.getNxVersion();
+        }
 	}
 }

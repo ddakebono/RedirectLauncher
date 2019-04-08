@@ -32,11 +32,11 @@
             <Button Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="10,440,0,0" VerticalAlignment="Top" Width="117" Click="Cancel"/>
             <TextBox x:Name="LauncherWebpage" HorizontalAlignment="Left" Height="23" Margin="10,66,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117"/>
             <Label Content="Launcher Webpage" Grid.Column="1" HorizontalAlignment="Left" Margin="10,66,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
-            <CheckBox Name="UsingPassport" Content="Using Passport?" HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Width="117" Click="PassportChecked"/>
-            <Label Content="Username" Grid.Column="1" HorizontalAlignment="Left" Margin="10,94,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
-            <Label Content="Password" Grid.Column="1" HorizontalAlignment="Left" Margin="10,122,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
-            <TextBox x:Name="Username" HorizontalAlignment="Left" Height="23" Margin="10,94,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117" IsEnabled="False"/>
-            <PasswordBox x:Name="Password" HorizontalAlignment="Left" Height="23" Margin="10,122,0,0" VerticalAlignment="Top" Width="117" IsEnabled="False"/>
+            <CheckBox Name="UsingPassport" Content="Use NX Passport?" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="117" Click="PassportChecked"/>
+            <Label Content="Username" Grid.Column="1" HorizontalAlignment="Left" Margin="10,122,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
+            <Label Content="Password" Grid.Column="1" HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Width="117" Height="23" Foreground="White"/>
+            <TextBox x:Name="Username" HorizontalAlignment="Left" Height="23" Margin="10,122,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="117" IsEnabled="False"/>
+            <PasswordBox x:Name="Password" HorizontalAlignment="Left" Height="23" Margin="10,153,0,0" VerticalAlignment="Top" Width="117" IsEnabled="False"/>
         </Grid>
     </Grid>
 </Controls:MetroWindow>

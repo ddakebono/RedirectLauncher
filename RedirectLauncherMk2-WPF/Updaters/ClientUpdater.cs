@@ -17,6 +17,7 @@ namespace RedirectLauncherMk2_WPF.Updater
 		public Queue<ManifestFile> FilesNeedingUpdate = new Queue<ManifestFile>();
 		private int TargetVersion = 0;
 		private string DefaultPatchDomain = "https://download2.nexon.net/Game/nxl/games/10200/";
+        private string AltManifestDomain = "http://aurares.potato.moe/patchdata/objects/";
 		private Game Client;
         public String lastError;
 		private DirectoryInfo updateDirectory;
@@ -40,7 +41,7 @@ namespace RedirectLauncherMk2_WPF.Updater
 				updateExtractDirectory.Create();
 		}
 
-		public async Task<bool> loadManifestForVersion(int Version, string patchDomain, String mainVersionHash)
+		public async Task<bool> loadManifestForVersion(int Version, string patchDomain, String mainVersionHash, String manifestHashLocation)
 		{
             if(patchDomain!=null)
 			    this.DefaultPatchDomain = patchDomain;
@@ -52,8 +53,19 @@ namespace RedirectLauncherMk2_WPF.Updater
 				{
 					try
 					{
-						dl.DownloadFile(DefaultPatchDomain + Properties.Settings.Default.AppID + "." + Version + "R_" + mainVersionHash + ".manifest.hash", updateDirectory.FullName + "\\manifest.hash");
-						dl.DownloadFile(DefaultPatchDomain + File.ReadAllText(updateDirectory.FullName + "\\manifest.hash"), updateDirectory.FullName + "\\update.manifest");
+                        if (manifestHashLocation != null)
+                        {
+                            //Get manifest hash location from NX API
+                            dl.DownloadFile(manifestHashLocation, updateDirectory.FullName + "\\manifest.hash");
+                            dl.DownloadFile(DefaultPatchDomain + File.ReadAllText(updateDirectory.FullName + "\\manifest.hash"), updateDirectory.FullName + "\\update.manifest");
+                        }
+                        else
+                        {
+                            //Get manifest hash location from Alt source
+                            dl.DownloadFile(AltManifestDomain + Version + "R.manifest.hash", updateDirectory.FullName + "\\manifest.hash");
+                            dl.DownloadFile(AltManifestDomain + File.ReadAllText(updateDirectory.FullName + "\\manifest.hash"), updateDirectory.FullName + "\\update.manifest");
+                        }
+						
 					}
 					catch (WebException e)
 					{

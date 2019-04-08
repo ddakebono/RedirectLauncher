@@ -41,12 +41,21 @@ namespace RedirectLauncherMk2_WPF
 			this.password = password;
 			this.patchObjectsHost = patchObjectsHost;
 			this.usingNXAuth = usingNXAuth;
+
+            
 		}
 
 		public Server()
 		{
 			
 		}
+
+        public string getManifestURL()
+        {
+            if(usingNXAuth)
+                return restAPI.manifestLocation;
+            return null;
+        }
 
 		public int getNxVersion()
 		{
@@ -66,58 +75,60 @@ namespace RedirectLauncherMk2_WPF
 
 		public Dictionary<String, String> patchData(Game client)
 		{
-			Dictionary<String, String> result = new Dictionary<string, string>();
-			try
-			{
-				HttpWebRequest initConnection = (HttpWebRequest)WebRequest.Create(patchdata);
-				HttpWebResponse recievedData = (HttpWebResponse)initConnection.GetResponse();
-				Stream dataStream = recievedData.GetResponseStream();
-				Encoding enc = Encoding.UTF8;
-				StreamReader r = new StreamReader(dataStream, enc);
-				String tempLine;
-				while ((tempLine = r.ReadLine()) != null)
-				{
-					if (tempLine.Trim().Length > 0 && !tempLine[0].Equals("#"))
-					{
-						String[] tempSplit = tempLine.Split(new char[] { '=' }, 2);
-						if (tempSplit.Length == 2)
-						{
-							result.Add(tempSplit[0], tempSplit[1]);
-						}
-					}
-				}
-				recievedData.Close();
-				dataStream.Close();
-			}
-			catch (Exception e)
-			{
-				if (e is WebException || e is UriFormatException)
-				{
-					System.Windows.MessageBox.Show("The launcher cannot connect to the server containing the patch info");
-					client.offlineMode = true;
-				}
-				else
-				{
-					throw;
-				}
-			}
-			//Load in overridden values
-			if (patchdataOverride != null)
-			{
-				foreach (var keypair in patchdataOverride)
-				{
-					try
-					{
-						result[keypair.Key] = keypair.Value;
-					}
-					catch (KeyNotFoundException e)
-					{
-						result.Add(keypair.Key, keypair.Value);
-					}
-				}
-			}
-			return result;
-		}
+            Dictionary<String, String> result = new Dictionary<string, string>();
+            if (!String.IsNullOrEmpty(patchdata))
+            {
+                try
+                {
+                    HttpWebRequest initConnection = (HttpWebRequest)WebRequest.Create(patchdata);
+                    HttpWebResponse recievedData = (HttpWebResponse)initConnection.GetResponse();
+                    Stream dataStream = recievedData.GetResponseStream();
+                    Encoding enc = Encoding.UTF8;
+                    StreamReader r = new StreamReader(dataStream, enc);
+                    String tempLine;
+                    while ((tempLine = r.ReadLine()) != null)
+                    {
+                        if (tempLine.Trim().Length > 0 && !tempLine[0].Equals("#"))
+                        {
+                            String[] tempSplit = tempLine.Split(new char[] { '=' }, 2);
+                            if (tempSplit.Length == 2)
+                            {
+                                result.Add(tempSplit[0], tempSplit[1]);
+                            }
+                        }
+                    }
+                    recievedData.Close();
+                    dataStream.Close();
+                }
+                catch (Exception e)
+                {
+                    if (e is WebException || e is UriFormatException)
+                    {
+                        System.Windows.MessageBox.Show("The launcher cannot connect to the server containing the patch info");
+                        client.offlineMode = true;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            if (patchdataOverride != null)
+            {
+                foreach (var keypair in patchdataOverride)
+                {
+                    try
+                    {
+                        result[keypair.Key] = keypair.Value;
+                    }
+                    catch (KeyNotFoundException e)
+                    {
+                        result.Add(keypair.Key, keypair.Value);
+                    }
+                }
+            }
+            return result;
+        }
 
 	}
 }
