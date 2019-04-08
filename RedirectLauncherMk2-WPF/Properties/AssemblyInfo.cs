@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Redirect Gaming")]
 [assembly: AssemblyProduct("Redirect Launcher")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.0.40")]
-[assembly: AssemblyFileVersion("1.2.0.40")]
+[assembly: AssemblyVersion("1.3.0.44")]
+[assembly: AssemblyFileVersion("1.3.0.44")]
